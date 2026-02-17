@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tus.tpt.Exception.DuplicateUsernameException;
 import com.tus.tpt.dao.UserRepository;
@@ -38,10 +37,10 @@ public class UserService {
         if (create.getPassword() == null || create.getPassword().isBlank()) {
             throw new IllegalArgumentException("Password is required");
         }
-        if (create.getFirstName() == null || create.getFirstName().isBlank()) {
+        if (create.getFirstname() == null || create.getFirstname().isBlank()) {
             throw new IllegalArgumentException("First name is required");
         }
-        if (create.getLastName() == null || create.getLastName().isBlank()) {
+        if (create.getLastname() == null || create.getLastname().isBlank()) {
             throw new IllegalArgumentException("Last name is required");
         }
         if (create.getRole() == null) {
@@ -52,8 +51,8 @@ public class UserService {
         user.setUsername(username);
 //        user.setPassword(passwordEncoder.encode(create.getPassword()));
         user.setPassword(create.getPassword());
-        user.setFirstName(create.getFirstName().trim());
-        user.setLastName(create.getLastName().trim());
+        user.setFirstName(create.getFirstname().trim());
+        user.setLastName(create.getLastname().trim());
         user.setRole(create.getRole());
 
         return userRepo.save(user);
