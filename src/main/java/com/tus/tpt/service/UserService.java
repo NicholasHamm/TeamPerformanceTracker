@@ -31,8 +31,7 @@ public class UserService {
     
     public User createUser(CreateNewUser create) {
 
-        String username = create.getUsername() == null ? null : create.getUsername().trim();
-        username = validateNewUsername(username);
+        String username = validateNewUsername(create.getUsername());
 
         if (create.getPassword() == null || create.getPassword().isBlank()) {
             throw new IllegalArgumentException("Password is required");
@@ -63,7 +62,6 @@ public class UserService {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Username is required");
         }
-
         if (userRepo.existsByUsernameIgnoreCase(username)) {
             throw new DuplicateUsernameException(username);
         }

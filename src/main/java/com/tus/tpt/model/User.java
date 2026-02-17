@@ -16,7 +16,7 @@ public class User {
 	  @Column(nullable = false, length = 50)
 	  private String username;
 
-	  @Column(nullable = false, length = 72) // BCrypt hashes are 60 chars
+	  @Column(nullable = false, length = 72)
 	  private String password;
 
 	  @Column(nullable = false, length = 50)
@@ -31,13 +31,13 @@ public class User {
 	
 	public User() {}
 	
-	public User(String username, String password, String firstName, String lastName, Role role) {
-		this.username = username;
-		this.password = password;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.role = role;
-	}
+//	public User(String username, String password, String firstName, String lastName, Role role) {
+//		this.username = username;
+//		this.password = password;
+//		this.firstName = firstName;
+//		this.lastName = lastName;
+//		this.role = role;
+//	}
 	
 	public Long getId() {
 		return id;
@@ -75,6 +75,5 @@ public class User {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	
 	
 }
