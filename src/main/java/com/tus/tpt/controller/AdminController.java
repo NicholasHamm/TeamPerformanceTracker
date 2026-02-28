@@ -15,6 +15,7 @@ import com.tus.tpt.model.User;
 
 @RestController
 @RequestMapping("/api/admin/users")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 	
 	private final UserService userService;
@@ -23,18 +24,17 @@ public class AdminController {
         this.userService = userService;
 	}
 	
-	@GetMapping
+    @GetMapping
     public List<User> getAllUsers() {
 		return this.userService.findAllUsers();
     }
 	
-	@GetMapping("/{username}")
+    @GetMapping("/{username}")
     public Optional<User> getUser(@PathVariable String username) {
 		return this.userService.getUser(username);
     }
 	
     @PostMapping
-    // @PreAuthorize("hasRole('EDIT')")
     public ResponseEntity<User> createUser(@RequestBody CreateNewUser user) {
     	 User savedUser = userService.createUser(user);
          return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
