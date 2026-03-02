@@ -35,20 +35,14 @@ pipeline {
                 bat 'mvn -B verify -DskipUnitTests=true'
             }
         }
-		        
-		stage('SonarQube Analysis') {
-		  steps {
-		    withSonarQubeEnv('LocalSonar') {
-		      bat """
-		        call mvnw.cmd -B sonar:sonar ^
-		          -Dsonar.projectKey=TeamPerformanceTracker ^
-		          -Dsonar.projectName=TeamPerformanceTracker ^
-		          -Dsonar.host.url=%SONAR_HOST_URL% ^
-		          -Dsonar.token=%SONAR_AUTH_TOKEN%
-		      """
-		    }
-		  }
-		}
+
+        stage('SonarQube Analysis') {
+          steps {
+            withSonarQubeEnv('LocalSonar') {
+              bat 'mvn -B sonar:sonar -Dsonar.projectKey=TeamPerformanceTracker -Dsonar.projectName=TeamPerformanceTracker'
+            }
+          }
+        }
 
         stage('Quality Gate') {
             steps {
