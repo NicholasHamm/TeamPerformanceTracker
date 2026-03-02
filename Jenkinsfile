@@ -42,11 +42,6 @@ pipeline {
             junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml, target/failsafe-reports/*.xml'
             archiveArtifacts allowEmptyArchive: true, artifacts: 'target/screenshots/**'
             archiveArtifacts artifacts: 'target/**/*', fingerprint: true
-        }
-    }
-    
-    post {
-	    always {
 	        publishHTML(target: [
 	            reportDir: 'target/site/jacoco',
 	            reportFiles: 'index.html',
