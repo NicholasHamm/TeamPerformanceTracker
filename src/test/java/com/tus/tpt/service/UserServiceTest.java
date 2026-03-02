@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,6 +30,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp(){
         userRepo = mock(UserRepository.class);
+        passwordEncoder = mock(PasswordEncoder.class);
         service = new UserService(userRepo, passwordEncoder);
         
         dto = new CreateNewUser();
