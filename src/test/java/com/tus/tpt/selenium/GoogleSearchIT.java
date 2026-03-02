@@ -10,11 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import java.io.File;
-import org.apache.commons.io.FileUtils;
-
-File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-FileUtils.copyFile(screenshot, new File("target/screenshots/failure.png"));
-
 
 public class GoogleSearchIT {
 
@@ -25,6 +20,9 @@ public class GoogleSearchIT {
 
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://www.google.com");
+
+		File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		// FileUtils.copyFile(screenshot, new File("target/screenshots/failure.png"));
 
         assertTrue(driver.getTitle().contains("Google"));
 

@@ -1,6 +1,7 @@
 package com.tus.tpt.config;
-import com.tus.tpt.security.AuthEntryPointJwt;
 import com.tus.tpt.security.AuthTokenFilter;
+import com.tus.tpt.security.jwt.AuthEntryPointJwt;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,10 +1,12 @@
 package com.tus.tpt.dto;
 
+import com.tus.tpt.model.Role;
+
 public class CreateNewUser {
     private String username;
     private String password;
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     private Role role;
     
 	public String getUsername() {
@@ -19,17 +21,17 @@ public class CreateNewUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getFirstname() {
-		return firstname;
+	public String getFirstName() {
+		return firstName;
 	}
-	public void setFirstname(String firstName) {
-		this.firstname = firstName;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
-	public String getLastname() {
-		return lastname;
+	public String getLastName() {
+		return lastName;
 	}
-	public void setLastname(String lastName) {
-		this.lastname = lastName;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 	public Role getRole() {
 		return role;

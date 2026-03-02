@@ -1,4 +1,4 @@
-package com.tus.tpt.dto;
+package com.tus.tpt.model;
 
 public enum Role {
 	PLAYER, COACH, ADMIN
