@@ -38,7 +38,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
           steps {
-            withSonarQubeEnv('LocalSonarTPT') {
+            withSonarQubeEnv('LocalSonar') {
+            withCredentials([string(credentialsId: 'sonar-token-tpt', variable: 'SONAR_TOKEN')]) {
               bat 'mvn -B sonar:sonar -Dsonar.projectKey=TeamPerformanceTracker -Dsonar.projectName=TeamPerformanceTracker'
             }
           }
