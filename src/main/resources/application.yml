@@ -23,3 +23,10 @@ error:
 jwt:
   secret: "ThisIsADevelopmentOnlyJwtSecretKeyThatIsAtLeastThirtyTwoBytesLong!"
   expiration: 3600000  # 1 hour
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: WARN
+    org.apache.catalina.core: WARN
+    org.springframework.security: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
