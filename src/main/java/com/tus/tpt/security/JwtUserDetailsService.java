@@ -1,4 +1,4 @@
-package com.tus.tpt.jwt.service;
+package com.tus.tpt.security;
 
 import com.tus.tpt.dao.UserRepository;
 import com.tus.tpt.model.User;

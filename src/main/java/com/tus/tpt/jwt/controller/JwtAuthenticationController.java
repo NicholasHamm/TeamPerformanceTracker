@@ -1,5 +1,6 @@
 package com.tus.tpt.jwt.controller;
 
+import com.tus.tpt.jwt.model.JwtRequest;
 import com.tus.tpt.jwt.model.JwtResponse;
 import com.tus.tpt.jwt.service.JwtService;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
-@CrossOrigin
+@RequestMapping("/api/auth")
 public class JwtAuthenticationController {
 
     private final AuthenticationManager authenticationManager;
@@ -22,26 +22,18 @@ public class JwtAuthenticationController {
         this.jwtService = jwtService;
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<JwtResponse> loginWithQueryParams(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password) {
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
 
-        return authenticateAndRespond(username, password);
-    }
-
-    private ResponseEntity<JwtResponse> authenticateAndRespond(String username, String password) {
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                username,
-                                password
-                        )
-                );
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
 
         String token = jwtService.generateToken(
-                (org.springframework.security.core.userdetails.UserDetails)
-                        authentication.getPrincipal()
+                (org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal()
         );
 
         return ResponseEntity.ok(new JwtResponse(token));

@@ -2,7 +2,7 @@ package com.tus.tpt.config;
 
 import com.tus.tpt.jwt.config.JwtAuthenticationEntryPoint;
 import com.tus.tpt.jwt.security.JwtAuthenticationFilter;
-import com.tus.tpt.jwt.service.JwtUserDetailsService;
+import com.tus.tpt.security.JwtUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,10 +36,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
             http
+                    .csrf(csrf -> csrf.disable())
                     .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                     .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/", "/index.html", "/styles.css", "/js/**", "/auth/**", "/error").permitAll()
+                            .requestMatchers(
+                                    "/",
+                                    "/index.html",
+                                    "/styles.css",
+                                    "/js/**",
+                                    "/api/auth/login",
+                                    "/error",
+                                    "/favicon.ico"
+                            ).permitAll()
                             .anyRequest().authenticated()
                     );
 
