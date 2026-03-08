@@ -10,22 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username)
-//            throws UsernameNotFoundException {
-//
-//        if ("mary".equals(username)) {
-//            return User.builder()
-//                    .username("mary")
-//                    .password("$2a$12$yUSsdB0gbxhR0H4NZVO2TOVFvpJ4GzRWRKRaBgIX1kF5SuWgviZuu") // mary123
-//                    .authorities(Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN")))
-//                    .build();
-//        }
-//
-//        throw new UsernameNotFoundException(
-//                "User not found with username: " + username);
-//    }
-
     private final UserRepository userRepo;
 
     public JwtUserDetailsService(UserRepository userRepo) {

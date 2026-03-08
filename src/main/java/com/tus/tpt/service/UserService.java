@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.tus.tpt.Exception.DuplicateUsernameException;
+import com.tus.tpt.exception.DuplicateUsernameException;
 import com.tus.tpt.dao.UserRepository;
 import com.tus.tpt.dto.CreateNewUser;
 import com.tus.tpt.dto.UserResponse;
@@ -58,7 +58,6 @@ public class UserService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(create.getPassword()));
-//        user.setPassword(create.getPassword());
         user.setFirstName(create.getFirstName().trim());
         user.setLastName(create.getLastName().trim());
         user.setRole(create.getRole());

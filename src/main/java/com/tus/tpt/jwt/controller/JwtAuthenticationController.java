@@ -1,9 +1,7 @@
 package com.tus.tpt.jwt.controller;
 
-import com.tus.tpt.jwt.model.JwtRequest;
 import com.tus.tpt.jwt.model.JwtResponse;
 import com.tus.tpt.jwt.service.JwtService;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,16 +27,8 @@ public class JwtAuthenticationController {
             @RequestParam("username") String username,
             @RequestParam("password") String password) {
 
-        System.out.println("HIT /auth/login with username=" + username);
         return authenticateAndRespond(username, password);
     }
-//
-//    @GetMapping("/login")
-//    public ResponseEntity<JwtResponse> loginWithQueryParams(
-//            @RequestParam("username") String username,
-//            @RequestParam("password") String password) {
-//        return authenticateAndRespond(username, password);
-//    }
 
     private ResponseEntity<JwtResponse> authenticateAndRespond(String username, String password) {
         Authentication authentication =

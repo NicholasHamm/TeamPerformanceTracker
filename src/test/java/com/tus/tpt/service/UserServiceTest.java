@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,7 +13,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.tus.tpt.Exception.DuplicateUsernameException;
+import com.tus.tpt.exception.DuplicateUsernameException;
 import com.tus.tpt.dao.UserRepository;
 import com.tus.tpt.dto.CreateNewUser;
 import com.tus.tpt.dto.UserResponse;
@@ -23,14 +22,13 @@ import com.tus.tpt.model.User;
 
 class UserServiceTest {
     private UserRepository userRepo;
-    private PasswordEncoder passwordEncoder;
     private UserService service;
     CreateNewUser dto;
 
     @BeforeEach
     void setUp(){
         userRepo = mock(UserRepository.class);
-        passwordEncoder = mock(PasswordEncoder.class);
+        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
         service = new UserService(userRepo, passwordEncoder);
         
         dto = new CreateNewUser();

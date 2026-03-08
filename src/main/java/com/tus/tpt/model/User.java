@@ -29,19 +29,8 @@ public class User {
 	
 	public User() {}
 	
-//	public User(String username, String password, String firstName, String lastName, Role role) {
-//		this.username = username;
-//		this.password = password;
-//		this.firstName = firstName;
-//		this.lastName = lastName;
-//		this.role = role;
-//	}
-	
 	public Long getId() {
 		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
 	}
 	public String getUsername() {
 		return username;

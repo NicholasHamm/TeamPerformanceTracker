@@ -4,28 +4,48 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import java.io.File;
-
-public class GoogleSearchIT {
+class GoogleSearchIT {
 
     @Test
-    void verifyGoogleHomePageLoads() {
+    void verifyGoogleHomePageLoads() throws Exception {
+
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless=new");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
         WebDriver driver = new ChromeDriver(options);
-        driver.get("https://www.google.com");
 
-		File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		// FileUtils.copyFile(screenshot, new File("target/screenshots/failure.png"));
+        try {
 
-        assertTrue(driver.getTitle().contains("Google"));
+            driver.get("https://www.google.com");
 
-        driver.quit();
+            assertTrue(driver.getTitle().contains("Google"));
+
+        } catch (AssertionError e) {
+
+            File screenshot =
+                    ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+
+            FileUtils.copyFile(
+                    screenshot,
+                    new File("target/screenshots/failure.png")
+            );
+
+            throw e;
+        }
+
+        finally {
+            driver.quit();
+        }
     }
 }

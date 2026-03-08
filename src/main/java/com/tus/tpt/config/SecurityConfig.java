@@ -33,19 +33,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/styles.css", "/js/**", "/auth/**", "/error").permitAll()
-                        .anyRequest().authenticated()
-                );
+    public SecurityFilterChain filterChain(HttpSecurity http) {
+        try {
+            http
+                    .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+                    .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests(auth -> auth
+                            .requestMatchers("/", "/index.html", "/styles.css", "/js/**", "/auth/**", "/error").permitAll()
+                            .anyRequest().authenticated()
+                    );
 
-        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+            http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+            return http.build();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to build SecurityFilterChain", e);
+        }
     }
 
     @Bean
