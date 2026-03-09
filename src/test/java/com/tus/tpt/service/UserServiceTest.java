@@ -47,7 +47,6 @@ class UserServiceTest {
         UserResponse saved = service.createUser(dto);
 
         assertEquals("Joe", saved.username());
-        //assertEquals("Password1", saved.password());
         assertEquals("Joe", saved.firstName());
         assertEquals("Bloggs", saved.lastName());
         assertEquals(Role.ADMIN, saved.role());

@@ -36,7 +36,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
             http
-                    .csrf(csrf -> csrf.disable())
                     .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                     .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
