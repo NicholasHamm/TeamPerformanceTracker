@@ -36,6 +36,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
             http
+                    .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
                     .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                     .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
@@ -49,9 +50,8 @@ public class SecurityConfig {
                                     "/favicon.ico"
                             ).permitAll()
                             .anyRequest().authenticated()
-                    );
-
-            http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                    )
+                    .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
             return http.build();
         } catch (Exception e) {
