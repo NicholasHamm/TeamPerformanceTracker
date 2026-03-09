@@ -35,6 +35,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
+            // CSRF disabled only for login endpoint because authentication is stateless JWT-based.
+            // The application does not use cookies or HTTP sessions for authentication.
             http
                     .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/login"))
                     .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
