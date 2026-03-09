@@ -35,12 +35,12 @@ public class DriverFactory {
         options.addArguments("--disable-notifications");
         options.addArguments("--disable-save-password-bubble");
         options.addArguments("--window-size=1920,1080");
-//        options.addArguments("--no-sandbox");
-//        options.addArguments("--disable-dev-shm-usage");
-//
-//        if (Boolean.parseBoolean(env.getProperty("selenium.headless", "true"))) {
-//            options.addArguments("--headless=new");
-//        }
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+
+        if (Boolean.parseBoolean(env.getProperty("selenium.headless", "true"))) {
+            options.addArguments("--headless=new");
+        }
 
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(15));
