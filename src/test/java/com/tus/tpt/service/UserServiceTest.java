@@ -68,8 +68,8 @@ class UserServiceTest {
     }
     
     @ParameterizedTest
-    @MethodSource("blankFieldInputs")
-    void createNewUserBlankInputs(Consumer<CreateNewUser> dtoBlank, String expectedMessage) {
+    @MethodSource("invalidFieldInputs")
+    void createNewUserInvalidInputs(Consumer<CreateNewUser> dtoBlank, String expectedMessage) {
         dtoBlank.accept(dto);
         
 	    IllegalArgumentException ex =
@@ -79,15 +79,23 @@ class UserServiceTest {
 	    assertEquals(expectedMessage, ex.getMessage());
 	}
     
-    private static Stream<Arguments> blankFieldInputs() {
+    private static Stream<Arguments> invalidFieldInputs() {
         return Stream.of(
             Arguments.of(
-                (Consumer<CreateNewUser>) dto -> dto.setUsername(""),
-                "Username is required"
+                (Consumer<CreateNewUser>) dto -> dto.setUsername("us"),
+                "Username must be at least 3 characters long"
             ),
             Arguments.of(
                 (Consumer<CreateNewUser>) dto -> dto.setPassword(""),
-                "Password is required"
+                "Password must be at least 8 characters and include uppercase, lowercase and a number"
+            ),
+            Arguments.of(
+                (Consumer<CreateNewUser>) dto -> dto.setPassword("pass"),
+                "Password must be at least 8 characters and include uppercase, lowercase and a number"
+            ),
+            Arguments.of(
+                (Consumer<CreateNewUser>) dto -> dto.setPassword("PasswordP"),
+                "Password must be at least 8 characters and include uppercase, lowercase and a number"
             ),
             Arguments.of(
                 (Consumer<CreateNewUser>) dto -> dto.setFirstName(""),
@@ -103,5 +111,4 @@ class UserServiceTest {
             )
         );
     }
-
 }

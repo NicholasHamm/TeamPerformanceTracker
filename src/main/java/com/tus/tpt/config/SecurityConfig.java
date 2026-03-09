@@ -2,7 +2,7 @@ package com.tus.tpt.config;
 
 import com.tus.tpt.jwt.config.JwtAuthenticationEntryPoint;
 import com.tus.tpt.jwt.security.JwtAuthenticationFilter;
-import com.tus.tpt.security.JwtUserDetailsService;
+import com.tus.tpt.jwt.security.JwtUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,14 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+    private final JwtAuthenticationEntryPoint entryPoint;
     private final JwtAuthenticationFilter authTokenFilter;
     private final JwtUserDetailsService jwtUserDetailsService;
 
     public SecurityConfig(JwtAuthenticationEntryPoint unauthorizedHandler,
                           JwtAuthenticationFilter authTokenFilter,
                           JwtUserDetailsService jwtUserDetailsService) {
-        this.unauthorizedHandler = unauthorizedHandler;
+        this.entryPoint = unauthorizedHandler;
         this.authTokenFilter = authTokenFilter;
         this.jwtUserDetailsService = jwtUserDetailsService;
     }
@@ -35,22 +35,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         try {
-            // CSRF disabled only for login endpoint because authentication is stateless JWT-based.
+            // CSRF disabled because authentication is stateless JWT-based.
             // The application does not use cookies or HTTP sessions for authentication.
             http
-                    .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/login"))
-                    .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
-                    .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .csrf(csrf -> csrf.disable())
+                    .exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint))
+                    .sessionManagement(session ->
+                            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers(
                                     "/",
                                     "/index.html",
+                                    "/login",
                                     "/styles.css",
                                     "/js/**",
-                                    "/api/auth/login",
                                     "/error",
-                                    "/favicon.ico"
+                                    "/favicon.ico",
+                                    "/auth/**"
                             ).permitAll()
+                            .requestMatchers("/api/users/**").hasRole("ADMIN")
                             .anyRequest().authenticated()
                     )
                     .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);

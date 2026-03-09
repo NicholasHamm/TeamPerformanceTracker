@@ -1,4 +1,4 @@
-package com.tus.tpt.security;
+package com.tus.tpt.jwt.security;
 
 import com.tus.tpt.dao.UserRepository;
 import com.tus.tpt.model.User;
@@ -21,12 +21,12 @@ public class JwtUserDetailsService implements UserDetailsService {
         User appUser = userRepo.findByUsernameIgnoreCase(username.trim())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        String role = String.valueOf(appUser.getRole()).toUpperCase();
+        String role = appUser.getRole().name();
         String authority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(appUser.getUsername())
-                .password(appUser.getPassword())   // BCrypt hash from DB
+                .password(appUser.getPassword())
                 .authorities(authority)
                 .build();
     }

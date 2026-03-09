@@ -1,10 +1,11 @@
 package com.tus.tpt.model;
 
+import com.tus.tpt.dto.PlayerDto;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users", uniqueConstraints=@UniqueConstraint(columnNames="username"))
-public class User {
+public class User{
 	
 
 	  @Id
@@ -27,7 +28,9 @@ public class User {
 	  @Column(nullable = false)
 	  private Role role;
 	
-	public User() {}
+	public User() {
+        // JPA requires entity classes have a default, no-argument constructor
+    }
 	
 	public Long getId() {
 		return id;

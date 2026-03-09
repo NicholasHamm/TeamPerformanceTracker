@@ -42,9 +42,8 @@ public class UserService {
 
         String username = validateNewUsername(create.getUsername());
 
-        if (create.getPassword() == null || create.getPassword().isBlank()) {
-            throw new IllegalArgumentException("Password is required");
-        }
+        validateNewPassword(create.getPassword());
+
         if (create.getFirstName() == null || create.getFirstName().isBlank()) {
             throw new IllegalArgumentException("First name is required");
         }
@@ -72,8 +71,8 @@ public class UserService {
     
     public String validateNewUsername(String username) {
 
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username is required");
+        if (username.length() < 3) {
+            throw new IllegalArgumentException("Username must be at least 3 characters long");
         }
         username = username.trim();
         if (userRepo.existsByUsernameIgnoreCase(username)) {
@@ -81,6 +80,17 @@ public class UserService {
         }
         
         return username;
+    }
+
+    public String validateNewPassword(String password) {
+
+        if (password == null || !password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")) {
+            throw new IllegalArgumentException(
+                    "Password must be at least 8 characters and include uppercase, lowercase and a number"
+            );
+        }
+
+        return password;
     }
 
 }
