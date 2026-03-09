@@ -12,7 +12,7 @@ $(document).ready(function () {
         console.log("Sending login request:", credentials);
 
         $.ajax({
-            url: "http://localhost:8082/api/auth/login",
+            url: LOGIN_URL,
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify(credentials),
