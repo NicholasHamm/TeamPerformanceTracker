@@ -7,13 +7,7 @@ function fn() {
 	}
 
   var config = {
-    baseUrl: 'http://localhost:' + port,
-	adminUser: 'admin',
-	adminPass: 'admin',
-	coachUser: 'coach1',
-	coachPass: 'coach1',
-	playerUser: 'player1',
-	playerPass: 'player1'
+    baseUrl: 'http://localhost:' + port
   };
 
   karate.configure('headers', { Accept: 'application/json' });

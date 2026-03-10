@@ -1,6 +1,5 @@
 package com.tus.tpt.model;
 
-import com.tus.tpt.dto.PlayerDto;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -8,10 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "training_session",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_training_session_datetime_type", columnNames = {"datetime", "type"})
-        })
+@Table(name = "training_session")
 public class TrainingSession {
 
     @Id
@@ -36,7 +32,7 @@ public class TrainingSession {
     )
     private Set<User> players = new HashSet<>();
 
-    TrainingSession(){}
+    public TrainingSession(){}
 
     public TrainingSession(LocalDateTime date, TrainingType type, long duration, Set<User> players) {
         this.datetime = date;
@@ -45,7 +41,7 @@ public class TrainingSession {
         this.players = players;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

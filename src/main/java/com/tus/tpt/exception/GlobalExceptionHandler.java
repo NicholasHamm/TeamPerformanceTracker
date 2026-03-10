@@ -1,26 +1,41 @@
 package com.tus.tpt.exception;
 
+import java.time.format.DateTimeParseException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<Map<String, String>> handleIllegal(IllegalArgumentException ex) {
-		return ResponseEntity.badRequest().body(Map.of(
-	        "error", "VALIDATION_ERROR",
-	        "message", ex.getMessage()));
-	}
-	
-	@ExceptionHandler(DuplicateUsernameException.class)
-	public ResponseEntity<Map<String, String>> handleDup(DuplicateUsernameException ex) {
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-			"error", "DUPLICATE_USERNAME",
-			"message", ex.getMessage()));
-	}
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<?> handleDateTimeParse(DateTimeParseException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", "Invalid date/time format"));
+    }
+
+    @ExceptionHandler(DuplicateUsernameException.class)
+    public ResponseEntity<?> handleDuplicateUsername(DuplicateUsernameException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    }
 }

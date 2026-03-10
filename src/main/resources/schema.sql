@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS `training_session` (
   `type` varchar(30) NOT NULL,
   `duration` BIGINT NOT NULL,
   PRIMARY KEY (`id`)
-  CONSTRAINT `uk_training_session_datetime_type` UNIQUE (`datetime`, `type`)
 );
 
 CREATE TABLE IF NOT EXISTS `training_session_players` (
@@ -26,4 +25,21 @@ CREATE TABLE IF NOT EXISTS `training_session_players` (
     FOREIGN KEY (`session_id`) REFERENCES `training_session` (`id`),
   CONSTRAINT `fk_tsp_user`
     FOREIGN KEY (`player_id`) REFERENCES `users` (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `player_performance` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `player_id` BIGINT NOT NULL,
+  `session_id` BIGINT NOT NULL,
+  `total_distance` DOUBLE NOT NULL,
+  `distance_per_min` DOUBLE NOT NULL,
+  `high_intensity_distance` DOUBLE NOT NULL,
+  `top_speed` DOUBLE NOT NULL,
+  `effort_rating` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `uk_player_session` UNIQUE (`player_id`, `session_id`),
+  CONSTRAINT `fk_performance_player`
+    FOREIGN KEY (`player_id`) REFERENCES `users`(`id`),
+  CONSTRAINT `fk_performance_session`
+    FOREIGN KEY (`session_id`) REFERENCES `training_session`(`id`)
 );
