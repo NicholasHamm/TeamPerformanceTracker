@@ -1,4 +1,4 @@
-package com.tus.tpt.dto;
+package com.tus.tpt.dto.player;
 
 public record PlayerDto(
         Long id,

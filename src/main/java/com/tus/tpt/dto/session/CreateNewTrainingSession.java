@@ -1,4 +1,4 @@
-package com.tus.tpt.dto;
+package com.tus.tpt.dto.session;
 
 public record CreateNewTrainingSession(
         String datetime,

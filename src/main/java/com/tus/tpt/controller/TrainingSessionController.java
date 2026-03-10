@@ -1,6 +1,10 @@
 package com.tus.tpt.controller;
 
-import com.tus.tpt.dto.*;
+import com.tus.tpt.dto.player.PlayerDto;
+import com.tus.tpt.dto.session.CreateNewTrainingSession;
+import com.tus.tpt.dto.session.TrainingSessionResponse;
+import com.tus.tpt.dto.upload.PlayerPerformanceResponse;
+import com.tus.tpt.dto.upload.UploadPlayerPerformance;
 import com.tus.tpt.model.TrainingSession;
 import com.tus.tpt.model.TrainingType;
 import com.tus.tpt.service.PlayerPerformanceService;

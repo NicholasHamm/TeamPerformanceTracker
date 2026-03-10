@@ -1,7 +1,7 @@
 package com.tus.tpt.controller;
 
-import com.tus.tpt.dto.CreateNewUser;
-import com.tus.tpt.dto.UserResponse;
+import com.tus.tpt.dto.user.CreateNewUser;
+import com.tus.tpt.dto.user.UserResponse;
 import com.tus.tpt.model.User;
 import com.tus.tpt.service.UserService;
 import jakarta.validation.Valid;

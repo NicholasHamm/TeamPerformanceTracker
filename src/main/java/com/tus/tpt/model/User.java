@@ -1,6 +1,5 @@
 package com.tus.tpt.model;
 
-import com.tus.tpt.dto.PlayerDto;
 import jakarta.persistence.*;
 
 @Entity

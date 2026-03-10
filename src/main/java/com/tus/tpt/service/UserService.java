@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.tus.tpt.exception.DuplicateUsernameException;
 import com.tus.tpt.dao.UserRepository;
-import com.tus.tpt.dto.CreateNewUser;
-import com.tus.tpt.dto.UserResponse;
+import com.tus.tpt.dto.user.CreateNewUser;
+import com.tus.tpt.dto.user.UserResponse;
 import com.tus.tpt.model.User;
 
 @Service

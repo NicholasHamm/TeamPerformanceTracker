@@ -1,5 +1,6 @@
-package com.tus.tpt.dto;
+package com.tus.tpt.dto.session;
 
+import com.tus.tpt.dto.player.PlayerDto;
 import com.tus.tpt.model.TrainingType;
 
 import java.time.LocalDateTime;

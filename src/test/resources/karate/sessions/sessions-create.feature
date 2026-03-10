@@ -38,9 +38,9 @@ Feature: Training Sessions CREATE API
       | datetime            | type | duration | status |
       | 2026-02-09T17:00:00 | GYM  | 60       | 200    |
       | null                | GYM  | 60       | 400    |
+      | bad-date            | GYM  | 60       | 400    |
       | 2026-03-09T17:00:00 | null | 60       | 400    |
       | 2026-03-09T17:00:00 | GYM  | null     | 400    |
-      | bad-date            | GYM  | 60       | 400    |
       | 2026-03-09T17:00:00 | BAD  | 60       | 400    |
       | 2026-03-09T17:00:00 | BAD  | 9        | 400    |
       | 2026-03-09T17:00:00 | BAD  | 301      | 400    |

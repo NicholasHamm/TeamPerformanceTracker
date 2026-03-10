@@ -9,13 +9,14 @@ Feature: Training Session Performance API
     Given path 'api/sessions', 1, 'performance'
     And request
     """
-    {
-      "username": "player1",
-      "distance": 9500,
-      "topSpeed": 31.2,
-      "sprints": 14,
-      "heartRate": 155
-    }
+      {
+        "playerId": 3,
+        "totalDistance": 5000.0,
+        "distancePerMin": 120.5,
+        "highIntensityDistance": 800.0,
+        "topSpeed": 31.2,
+        "effortRating": 7
+      }
     """
     When method post
     Then status 200

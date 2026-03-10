@@ -1,4 +1,4 @@
-package com.tus.tpt.dto;
+package com.tus.tpt.dto.user;
 
 import com.tus.tpt.model.Role;
 
