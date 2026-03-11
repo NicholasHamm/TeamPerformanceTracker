@@ -56,7 +56,7 @@ pipeline {
     post {
         always {
             junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml, target/failsafe-reports/*.xml'
-            archiveArtifacts allowEmptyArchive: true, artifacts: 'target/screenshots/**'
+            archiveArtifacts artifacts: 'target/screenshots/**', allowEmptyArchive: true
             archiveArtifacts artifacts: 'target/**/*', fingerprint: true
 	        publishHTML(target: [
 	            reportDir: 'target/site/jacoco',

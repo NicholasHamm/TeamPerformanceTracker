@@ -17,7 +17,7 @@ public class PlayerPerformance {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id", nullable = false)
-    private User player; // or Player entity if you have one
+    private User player;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "session_id", nullable = false)
