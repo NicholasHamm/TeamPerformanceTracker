@@ -4,7 +4,6 @@ import com.tus.tpt.model.TrainingType;
 import java.time.LocalDateTime;
 
 public class PlayerSessionResponse {
-    private Long sessionId;
     private LocalDateTime datetime;
     private TrainingType type;
     private Integer duration;
@@ -13,15 +12,13 @@ public class PlayerSessionResponse {
     private Double topSpeed;
     private Integer effortRating;
 
-    public PlayerSessionResponse(Long sessionId,
-                                 LocalDateTime datetime,
+    public PlayerSessionResponse(LocalDateTime datetime,
                                  TrainingType type,
                                  Integer duration,
                                  Double totalDistance,
                                  Double highIntensityDistance,
                                  Double topSpeed,
                                  Integer effortRating) {
-        this.sessionId = sessionId;
         this.datetime = datetime;
         this.type = type;
         this.duration = duration;
@@ -30,11 +27,6 @@ public class PlayerSessionResponse {
         this.topSpeed = topSpeed;
         this.effortRating = effortRating;
     }
-
-    public Long getSessionId() {
-        return sessionId;
-    }
-
     public LocalDateTime getDatetime() {
         return datetime;
     }

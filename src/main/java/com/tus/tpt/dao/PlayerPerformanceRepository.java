@@ -19,7 +19,6 @@ public interface PlayerPerformanceRepository extends JpaRepository<PlayerPerform
 
     @Query("""
         select new com.tus.tpt.dto.player.PlayerSessionResponse(
-            ts.id,
             ts.datetime,
             ts.type,
             ts.duration,
