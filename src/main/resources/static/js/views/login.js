@@ -1,6 +1,4 @@
-import {showApp} from "./app.js";
-
-const LOGIN_URL = `auth/login`;
+const LOGIN_URL = "auth/login";
 
 $(document).ready(function () {
     $("#loginForm").on("submit", function (e) {
@@ -19,10 +17,12 @@ $(document).ready(function () {
             success: function (response) {
                 localStorage.setItem("jwt", response.token);
                 localStorage.setItem("role", response.role);
-                showApp();
+                window.showApp();
             },
             error: function () {
-                $("#loginError").removeClass("d-none").text("Invalid username or password");
+                $("#loginError")
+                    .removeClass("d-none")
+                    .text("Invalid username or password");
             }
         });
     });

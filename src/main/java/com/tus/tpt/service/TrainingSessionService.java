@@ -5,6 +5,7 @@ import com.tus.tpt.dao.TrainingSessionRepository;
 import com.tus.tpt.dao.UserRepository;
 import com.tus.tpt.dto.player.PlayerDto;
 import com.tus.tpt.dto.session.TrainingSessionResponse;
+import com.tus.tpt.dto.upload.PlayerPerformanceResponse;
 import com.tus.tpt.model.Role;
 import com.tus.tpt.model.TrainingSession;
 import com.tus.tpt.model.User;
@@ -19,6 +20,9 @@ import static java.time.LocalDateTime.now;
 
 @Service
 public class TrainingSessionService {
+
+    private static final int MIN_DURATION = 10;
+    private static final int MAX_DURATION = 300;
 
     private final TrainingSessionRepository trainingSessionRepo;
     private final UserRepository userRepo;
@@ -48,6 +52,26 @@ public class TrainingSessionService {
         return toResponse(saved);
     }
 
+    public List<PlayerPerformanceResponse> getUploadedDataForSession(Long sessionId) {
+        if (sessionId == null || !trainingSessionRepo.existsById(sessionId)) {
+            throw new IllegalArgumentException("Session not found");
+        }
+
+        return playerPerformanceRepo.findBySessionId(sessionId)
+                .stream()
+                .map(performance -> new PlayerPerformanceResponse(
+                        performance.getPlayer().getId(),
+                        performance.getPlayer().getFirstName() + " " + performance.getPlayer().getLastName(),
+                        performance.getSession().getId(),
+                        performance.getTotalDistance(),
+                        performance.getDistancePerMin(),
+                        performance.getHighIntensityDistance(),
+                        performance.getTopSpeed(),
+                        performance.getEffortRating()
+                ))
+                .toList();
+    }
+
     public List<PlayerDto> getAvailablePlayersForSession(Long sessionId) {
         if (!trainingSessionRepo.existsById(sessionId)) {
             throw new IllegalArgumentException("Session not found");
@@ -67,33 +91,18 @@ public class TrainingSessionService {
                 .toList();
     }
 
-    public TrainingSessionResponse addPlayerToTrainingSession(String username, Long trainingSessionId) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username is required");
-        }
-        if (trainingSessionId == null) {
-            throw new IllegalArgumentException("Training session id is required");
-        }
+    public boolean isSessionAvailable(TrainingSession trainingSession) {
+        LocalDateTime start = trainingSession.getDatetime();
+        LocalDateTime end = start.plusMinutes(trainingSession.getDuration());
 
-        TrainingSession session = trainingSessionRepo.findById(trainingSessionId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Training session [id=" + trainingSessionId + "] not found"));
+        return trainingSessionRepo.findAll()
+                .stream()
+                .anyMatch(existing -> {
+                    LocalDateTime existingStart = existing.getDatetime();
+                    LocalDateTime existingEnd = existingStart.plusMinutes(existing.getDuration());
 
-        User player = userRepo.findByUsernameIgnoreCase(username.trim())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Player: " + username + " not found"));
-
-        if (player.getRole() != Role.PLAYER) {
-            throw new IllegalArgumentException("User: " + username + " is not a player");
-        }
-
-        if (session.getPlayers().contains(player)) {
-            throw new IllegalArgumentException("Player: " + username + " already added to training session");
-        }
-
-        session.getPlayers().add(player);
-        TrainingSession saved = trainingSessionRepo.save(session);
-        return toResponse(saved);
+                    return start.isBefore(existingEnd) && end.isAfter(existingStart);
+                });
     }
 
     public void validateTrainingSession(TrainingSession trainingSession) {
@@ -117,23 +126,9 @@ public class TrainingSessionService {
             throw new IllegalArgumentException("Training type is required");
         }
 
-        if (trainingSession.getDuration() <= 10 || trainingSession.getDuration() > 300) {
-            throw new IllegalArgumentException("Duration must be between 10 and 300 minutes");
+        if (trainingSession.getDuration() <= MIN_DURATION || trainingSession.getDuration() > MAX_DURATION) {
+            throw new IllegalArgumentException("Duration must be between "+ MIN_DURATION +" and "+ MAX_DURATION +" minutes");
         }
-    }
-
-    public boolean isSessionAvailable(TrainingSession trainingSession) {
-        LocalDateTime start = trainingSession.getDatetime();
-        LocalDateTime end = start.plusMinutes(trainingSession.getDuration());
-
-        return trainingSessionRepo.findAll()
-                .stream()
-                .anyMatch(existing -> {
-                    LocalDateTime existingStart = existing.getDatetime();
-                    LocalDateTime existingEnd = existingStart.plusMinutes(existing.getDuration());
-
-                    return start.isBefore(existingEnd) && end.isAfter(existingStart);
-                });
     }
 
     private TrainingSessionResponse toResponse(TrainingSession session) {

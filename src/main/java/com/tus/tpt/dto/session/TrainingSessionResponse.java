@@ -10,6 +10,6 @@ public record TrainingSessionResponse(
         Long id,
         LocalDateTime datetime,
         TrainingType type,
-        long duration,
+        int duration,
         Set<PlayerDto> players
 ) {}

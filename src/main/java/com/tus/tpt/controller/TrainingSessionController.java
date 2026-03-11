@@ -5,9 +5,10 @@ import com.tus.tpt.dto.session.CreateNewTrainingSession;
 import com.tus.tpt.dto.session.TrainingSessionResponse;
 import com.tus.tpt.dto.upload.PlayerPerformanceResponse;
 import com.tus.tpt.dto.upload.UploadPlayerPerformance;
+import com.tus.tpt.model.PlayerPerformance;
 import com.tus.tpt.model.TrainingSession;
 import com.tus.tpt.model.TrainingType;
-import com.tus.tpt.service.PlayerPerformanceService;
+import com.tus.tpt.service.UploadPerformanceService;
 import com.tus.tpt.service.TrainingSessionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,9 @@ import java.util.Map;
 public class TrainingSessionController {
 
     private final TrainingSessionService trainingSessionService;
-    private final PlayerPerformanceService playerPerformanceService;
+    private final UploadPerformanceService playerPerformanceService;
 
-    public TrainingSessionController(TrainingSessionService trainingSessionService, PlayerPerformanceService playerPerformanceService) {
+    public TrainingSessionController(TrainingSessionService trainingSessionService, UploadPerformanceService playerPerformanceService) {
         this.trainingSessionService = trainingSessionService;
         this.playerPerformanceService = playerPerformanceService;
     }
@@ -62,25 +63,18 @@ public class TrainingSessionController {
     public List<PlayerDto> getAvailablePlayers(@PathVariable Long sessionId) {
         return trainingSessionService.getAvailablePlayersForSession(sessionId);
     }
-    @PostMapping("/{id}/players/{username}")
-    public ResponseEntity<TrainingSessionResponse> addPlayerToSession(
-            @PathVariable Long id,
-            @PathVariable String username
-    ) {
-        return ResponseEntity.ok(trainingSessionService.addPlayerToTrainingSession(username, id));
-    }
 
     @PostMapping("/{sessionId}/performance")
     public ResponseEntity<?> uploadPlayerData(
             @PathVariable Long sessionId,
             @Valid @RequestBody UploadPlayerPerformance request
     ) {
-        playerPerformanceService.uploadPlayerData(sessionId, request);
-        return ResponseEntity.ok(Map.of("message", "Player data uploaded successfully"));
+        PlayerPerformanceResponse response = playerPerformanceService.uploadPlayerData(sessionId, request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{sessionId}/performance")
     public List<PlayerPerformanceResponse> getPerformanceForSession(@PathVariable Long sessionId) {
-        return playerPerformanceService.getPerformanceForSession(sessionId);
+        return trainingSessionService.getUploadedDataForSession(sessionId);
     }
 }

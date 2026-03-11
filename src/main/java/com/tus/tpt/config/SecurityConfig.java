@@ -54,6 +54,8 @@ public class SecurityConfig {
                                     "/auth/**"
                             ).permitAll()
                             .requestMatchers("/api/users/**").hasRole("ADMIN")
+                            .requestMatchers("/api/session/**").hasRole("COACH")
+                            .requestMatchers("/api/player/**").hasRole("PLAYER")
                             .anyRequest().authenticated()
                     )
                     .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);

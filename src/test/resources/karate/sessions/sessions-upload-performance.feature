@@ -12,15 +12,26 @@ Feature: Training Session Performance API
       {
         "playerId": 3,
         "totalDistance": 5000.0,
-        "distancePerMin": 120.5,
         "highIntensityDistance": 800.0,
-        "topSpeed": 31.2,
+        "topSpeed": 12.2,
         "effortRating": 7
       }
     """
     When method post
     Then status 200
-    And match response.message == 'Player data uploaded successfully'
+    And match response contains
+    """
+      {
+        "playerId": #number,
+        "playerName": #string,
+        "sessionId": #number,
+        "totalDistance": #number,
+        "distancePerMin": #number,
+        "highIntensityDistance": #number,
+        "topSpeed": #number,
+        "effortRating": #number
+      }
+    """
 
   Scenario: Get performance for session
     Given path 'api/sessions', 1, 'performance'

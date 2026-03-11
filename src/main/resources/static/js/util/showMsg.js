@@ -1,47 +1,58 @@
-export function showMsg(msgBox, message, type = "info") {
-    if (!msgBox || !message?.length) return;
+(() => {
+    'use strict';
 
-    const msgIcon = msgBox.querySelector("i");
-    const msgText = msgBox.querySelector(".msg-text");
+    const showMsg = (msgBox, message, type = 'info') => {
+        if (!msgBox || !message?.length) return;
 
-    if (!msgIcon || !msgText) return;
+        const msgIcon = msgBox.querySelector('i');
+        const msgText = msgBox.querySelector('.msg-text');
 
-    msgBox.classList.remove(
-        "d-none",
-        "alert-success",
-        "alert-danger",
-        "alert-warning",
-        "alert-info"
-    );
+        if (!msgIcon || !msgText) return;
 
-    let alertClass = "alert-info";
-    let iconClass = "bi-info-circle-fill";
+        msgBox.classList.remove(
+            'd-none',
+            'alert-success',
+            'alert-danger',
+            'alert-warning',
+            'alert-info'
+        );
 
-    switch (type) {
-        case "success":
-        case "alert-success":
-            alertClass = "alert-success";
-            iconClass = "bi-check-circle-fill";
-            break;
-        case "danger":
-        case "alert-danger":
-            alertClass = "alert-danger";
-            iconClass = "bi-exclamation-octagon-fill";
-            break;
-        case "warning":
-        case "alert-warning":
-            alertClass = "alert-warning";
-            iconClass = "bi-exclamation-triangle-fill";
-            break;
-    }
+        let alertClass = 'alert-info';
+        let iconClass = 'bi-info-circle-fill';
 
-    msgBox.classList.add(alertClass);
-    msgIcon.className = `bi ${iconClass} fs-5 flex-shrink-0`;
-    msgText.innerHTML = message;
-    msgBox.classList.remove("d-none");
-}
+        switch (type) {
+            case 'success':
+            case 'alert-success':
+                alertClass = 'alert-success';
+                iconClass = 'bi-check-circle-fill';
+                break;
 
-export function hideMsg(msgBox){
-    if (!msgBox) return;
-    msgBox.classList.add("d-none");
-}
+            case 'danger':
+            case 'alert-danger':
+                alertClass = 'alert-danger';
+                iconClass = 'bi-exclamation-octagon-fill';
+                break;
+
+            case 'warning':
+            case 'alert-warning':
+                alertClass = 'alert-warning';
+                iconClass = 'bi-exclamation-triangle-fill';
+                break;
+        }
+
+        msgBox.classList.add(alertClass);
+        msgIcon.className = `bi ${iconClass} fs-5 flex-shrink-0`;
+        msgText.innerHTML = message;
+        msgBox.classList.remove('d-none');
+    };
+
+    const hideMsg = (msgBox) => {
+        if (!msgBox) return;
+        msgBox.classList.add('d-none');
+    };
+
+    // expose globally so other scripts can use them
+    window.showMsg = showMsg;
+    window.hideMsg = hideMsg;
+
+})();

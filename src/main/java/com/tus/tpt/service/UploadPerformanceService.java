@@ -12,16 +12,14 @@ import com.tus.tpt.model.Role;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class PlayerPerformanceService {
+public class UploadPerformanceService {
 
     private final PlayerPerformanceRepository performanceRepository;
     private final UserRepository userRepository;
     private final TrainingSessionRepository sessionRepository;
 
-    public PlayerPerformanceService(PlayerPerformanceRepository performanceRepository,
+    public UploadPerformanceService(PlayerPerformanceRepository performanceRepository,
                                     UserRepository userRepository,
                                     TrainingSessionRepository sessionRepository) {
         this.performanceRepository = performanceRepository;
@@ -29,68 +27,50 @@ public class PlayerPerformanceService {
         this.sessionRepository = sessionRepository;
     }
 
-    public void uploadPlayerData(Long sessionId, UploadPlayerPerformance request) {
+    public PlayerPerformanceResponse uploadPlayerData(Long sessionId, UploadPlayerPerformance request) {
         User player = userRepository.findById(request.getPlayerId())
                 .orElseThrow(() -> new IllegalArgumentException("Player not found"));
 
         if (player.getRole() != Role.PLAYER) {
-            throw new IllegalArgumentException("Player not found");
+            throw new IllegalArgumentException("User is not a player");
         }
 
         TrainingSession session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Training session not found"));
 
         if (performanceRepository.existsByPlayerIdAndSessionId(request.getPlayerId(), sessionId)) {
             throw new IllegalArgumentException("Data already exists for this player in this session");
         }
-
-        validateBusinessRanges(request);
-
-        PlayerPerformance performance = new PlayerPerformance(
-                player,
-                session,
-                request.getTotalDistance(),
-                request.getDistancePerMin(),
-                request.getHighIntensityDistance(),
-                request.getTopSpeed(),
-                request.getEffortRating()
-        );
+        PlayerPerformance performance = getPlayerPerformance(request, session, player);
 
         try {
             performanceRepository.save(performance);
+            return toResponse(performance);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Data already exists for this player in this session");
         }
     }
 
-    private void validateBusinessRanges(UploadPlayerPerformance request) {
+    private static PlayerPerformance getPlayerPerformance(UploadPlayerPerformance request, TrainingSession session, User player) {
         if (request.getHighIntensityDistance() > request.getTotalDistance()) {
             throw new IllegalArgumentException("High intensity distance cannot exceed total distance");
         }
+        double distancePerMin = request.getTotalDistance() / session.getDuration();
 
-        if (request.getDistancePerMin() > 300) {
-            throw new IllegalArgumentException("Distance per min is unrealistic");
-        }
-
-        if (request.getTotalDistance() > 25000) {
-            throw new IllegalArgumentException("Total distance is unrealistic");
-        }
-
-        if (request.getHighIntensityDistance() > 10000) {
-            throw new IllegalArgumentException("High intensity distance is unrealistic");
-        }
-    }
-
-    public List<PlayerPerformanceResponse> getPerformanceForSession(Long sessionId) {
-        return performanceRepository.findBySessionId(sessionId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        PlayerPerformance performance = new PlayerPerformance(
+                player,
+                session,
+                request.getTotalDistance(),
+                distancePerMin,
+                request.getHighIntensityDistance(),
+                request.getTopSpeed(),
+                request.getEffortRating()
+        );
+        return performance;
     }
 
     private PlayerPerformanceResponse toResponse(PlayerPerformance performance) {
         return new PlayerPerformanceResponse(
-                performance.getId(),
                 performance.getPlayer().getId(),
                 performance.getPlayer().getFirstName() + " " + performance.getPlayer().getLastName(),
                 performance.getSession().getId(),

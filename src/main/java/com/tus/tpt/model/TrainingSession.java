@@ -22,7 +22,7 @@ public class TrainingSession {
     private TrainingType type;
 
     @Column(nullable = false)
-    private long duration;
+    private int duration;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -34,7 +34,7 @@ public class TrainingSession {
 
     public TrainingSession(){}
 
-    public TrainingSession(LocalDateTime date, TrainingType type, long duration, Set<User> players) {
+    public TrainingSession(LocalDateTime date, TrainingType type, int duration, Set<User> players) {
         this.datetime = date;
         this.type = type;
         this.duration = duration;
@@ -61,11 +61,11 @@ public class TrainingSession {
         this.type = type;
     }
 
-    public long getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 

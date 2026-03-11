@@ -2,26 +2,24 @@ package com.tus.tpt.dto.upload;
 
 import jakarta.validation.constraints.*;
 
-public class UploadPlayerPerformance{
+public class UploadPlayerPerformance {
 
     @NotNull(message = "Player id is required")
     private Long playerId;
 
     @NotNull(message = "Total distance is required")
-    @Min(value = 0, message = "Total distance cannot be negative")
+    @DecimalMin(value = "0.0", message = "Total distance cannot be negative")
+    @DecimalMax(value = "20000.0", message = "Total distance is unrealistic (> 20,000m)")
     private Double totalDistance;
 
-    @NotNull(message = "Distance per min is required")
-    @Min(value = 0, message = "Distance per min cannot be negative")
-    private Double distancePerMin;
-
     @NotNull(message = "High intensity distance is required")
-    @Min(value = 0, message = "High intensity distance cannot be negative")
+    @DecimalMin(value = "0.0", message = "High intensity distance cannot be negative")
+    @DecimalMax(value = "10000.0", message = "High intensity distance is unrealistic (> 10,000m)")
     private Double highIntensityDistance;
 
     @NotNull(message = "Top speed is required")
     @DecimalMin(value = "0.0", message = "Top speed cannot be negative")
-    @DecimalMax(value = "45.0", message = "Top speed is unrealistic")
+    @DecimalMax(value = "15.0", message = "Top speed is unrealistic (> 15m/s)")
     private Double topSpeed;
 
     @NotNull(message = "Effort rating is required")
@@ -34,9 +32,6 @@ public class UploadPlayerPerformance{
 
     public Double getTotalDistance() { return totalDistance; }
     public void setTotalDistance(Double totalDistance) { this.totalDistance = totalDistance; }
-
-    public Double getDistancePerMin() { return distancePerMin; }
-    public void setDistancePerMin(Double distancePerMin) { this.distancePerMin = distancePerMin; }
 
     public Double getHighIntensityDistance() { return highIntensityDistance; }
     public void setHighIntensityDistance(Double highIntensityDistance) { this.highIntensityDistance = highIntensityDistance; }

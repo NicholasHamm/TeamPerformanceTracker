@@ -1,7 +1,6 @@
 package com.tus.tpt.dto.upload;
 
 public record PlayerPerformanceResponse(
-        Long id,
         Long playerId,
         String playerName,
         Long sessionId,
