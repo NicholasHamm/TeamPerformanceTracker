@@ -3,6 +3,7 @@ package com.tus.tpt.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -65,6 +66,43 @@ class UserServiceTest {
 
         assertEquals("Username ["+dupUsername+"] already exists", e.getMessage());
         verify(userRepo, never()).save(any());
+    }
+    
+    @Test
+    void getUserTest_shouldReturnEmptyWhenUsernameIsNull() {
+        Optional<User> result = service.getUser(null);
+
+        assertTrue(result.isEmpty());
+        verify(userRepo, never()).findByUsernameIgnoreCase(anyString());
+    }
+
+    @Test
+    void getUserTest_shouldReturnEmptyWhenNotFound() {
+        when(userRepo.findByUsernameIgnoreCase("Joe")).thenReturn(Optional.empty());
+
+        Optional<User> result = service.getUser("Joe");
+
+        assertTrue(result.isEmpty());
+        verify(userRepo).findByUsernameIgnoreCase("Joe");
+    }
+    
+    @Test
+    void getUserTest() {
+    	String username = "Joe";
+
+        User user = new User();
+        user.setUsername(username);
+        user.setFirstName("Joseph");
+        user.setLastName("Bloggs");
+        user.setRole(Role.ADMIN);
+
+        when(userRepo.findByUsernameIgnoreCase("Joe")).thenReturn(Optional.of(user));
+
+        Optional<User> result = service.getUser(username);
+
+        assertTrue(result.isPresent());
+        assertEquals("Joe", result.get().getUsername());
+        verify(userRepo, times(1)).findByUsernameIgnoreCase("Joe");
     }
     
     @ParameterizedTest

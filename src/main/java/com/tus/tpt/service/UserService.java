@@ -33,10 +33,6 @@ public class UserService {
 	    if (username == null) return Optional.empty();
 	    return userRepo.findByUsernameIgnoreCase(username.trim());
 	}
-	
-    public boolean doesUsernameExist(String username) {
-        return getUser(username).isPresent();
-    }
     
     public UserResponse createUser(CreateNewUser create) {
 

@@ -21,6 +21,8 @@ import com.tus.tpt.dao.TrainingSessionRepository;
 import com.tus.tpt.dao.UserRepository;
 import com.tus.tpt.dto.player.PlayerDto;
 import com.tus.tpt.dto.session.TrainingSessionResponse;
+import com.tus.tpt.dto.upload.PlayerPerformanceResponse;
+import com.tus.tpt.model.PlayerPerformance;
 import com.tus.tpt.model.Role;
 import com.tus.tpt.model.TrainingSession;
 import com.tus.tpt.model.TrainingType;
@@ -256,5 +258,68 @@ class TrainingSessionServiceTest {
         boolean available = service.isSessionAvailable(session);
 
         assertFalse(available);
+    }
+    
+    @Test
+    void getUploadedDataForSession_nullSessionId() {
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> service.getUploadedDataForSession(null)
+        );
+
+        assertEquals("Session not found", ex.getMessage());
+        verify(trainingSessionRepo, never()).existsById(any());
+        verify(playerPerformanceRepo, never()).findBySessionId(any());
+    }
+
+    @Test
+    void getUploadedDataForSession_noSessionExists() {
+        Long sessionId = 999L;
+
+        when(trainingSessionRepo.existsById(sessionId)).thenReturn(false);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> service.getUploadedDataForSession(sessionId)
+        );
+
+        assertEquals("Session not found", ex.getMessage());
+        verify(trainingSessionRepo).existsById(sessionId);
+        verify(playerPerformanceRepo, never()).findBySessionId(any());
+    }
+    
+    @Test
+    void getUploadedDataForSessionTest() {
+        Long sessionId = 1L;
+        
+        PlayerPerformance performance = new PlayerPerformance();
+        performance.setPlayer(player1);
+        performance.setSession(session);
+        performance.setTotalDistance(9500.0);
+        performance.setDistancePerMin(105.5);
+        performance.setHighIntensityDistance(1200.0);
+        performance.setTopSpeed(31.2);
+        performance.setEffortRating(8);
+
+        when(trainingSessionRepo.existsById(sessionId)).thenReturn(true);
+        when(playerPerformanceRepo.findBySessionId(sessionId)).thenReturn(List.of(performance));
+
+        List<PlayerPerformanceResponse> result = service.getUploadedDataForSession(sessionId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+
+        PlayerPerformanceResponse response = result.get(0);
+        assertEquals(player1.getId(), response.playerId());
+        assertEquals("Mike Player", response.playerName());
+        assertEquals(session.getId(), response.sessionId());
+        assertEquals(9500.0, response.totalDistance());
+        assertEquals(105.5, response.distancePerMin());
+        assertEquals(1200.0, response.highIntensityDistance());
+        assertEquals(31.2, response.topSpeed());
+        assertEquals(8, response.effortRating());
+
+        verify(trainingSessionRepo, times(1)).existsById(sessionId);
+        verify(playerPerformanceRepo, times(1)).findBySessionId(sessionId);
     }
 }
