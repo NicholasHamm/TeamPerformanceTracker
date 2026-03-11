@@ -5,23 +5,19 @@ import com.tus.tpt.dto.session.CreateNewTrainingSession;
 import com.tus.tpt.dto.session.TrainingSessionResponse;
 import com.tus.tpt.dto.upload.PlayerPerformanceResponse;
 import com.tus.tpt.dto.upload.UploadPlayerPerformance;
-import com.tus.tpt.model.PlayerPerformance;
 import com.tus.tpt.model.TrainingSession;
 import com.tus.tpt.model.TrainingType;
 import com.tus.tpt.service.UploadPerformanceService;
 import com.tus.tpt.service.TrainingSessionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sessions")
-@PreAuthorize("hasAnyRole('ADMIN', 'COACH')")
 public class TrainingSessionController {
 
     private final TrainingSessionService trainingSessionService;
@@ -65,7 +61,7 @@ public class TrainingSessionController {
     }
 
     @PostMapping("/{sessionId}/performance")
-    public ResponseEntity<?> uploadPlayerData(
+    public ResponseEntity<PlayerPerformanceResponse> uploadPlayerData(
             @PathVariable Long sessionId,
             @Valid @RequestBody UploadPlayerPerformance request
     ) {

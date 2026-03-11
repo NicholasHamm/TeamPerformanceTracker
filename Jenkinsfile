@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('UI Tests (Selenium)') {
+        stage('UI Tests (Karate & Selenium)') {
             when {
                 expression { return params.RUN_UI_TESTS }
             }
@@ -62,6 +62,13 @@ pipeline {
 	            reportDir: 'target/site/jacoco',
 	            reportFiles: 'index.html',
 	            reportName: 'JaCoCo Code Coverage',
+	            keepAll: true,
+	            alwaysLinkToLastBuild: true
+	        ])
+	        publishHTML(target: [
+	            reportDir: 'target/karate-reports',
+	            reportFiles: 'karate-summary.html',
+	            reportName: 'Karate Summary',
 	            keepAll: true,
 	            alwaysLinkToLastBuild: true
 	        ])

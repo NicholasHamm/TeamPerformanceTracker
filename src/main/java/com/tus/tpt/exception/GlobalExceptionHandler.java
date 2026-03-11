@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	private static final String ERROR = "error";
+	
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new LinkedHashMap<>();
 
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
@@ -25,17 +27,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
-        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, ex.getMessage()));
     }
 
     @ExceptionHandler(DateTimeParseException.class)
-    public ResponseEntity<?> handleDateTimeParse(DateTimeParseException ex) {
-        return ResponseEntity.badRequest().body(Map.of("error", "Invalid date/time format"));
+    public ResponseEntity<Map<String, String>> handleDateTimeParse(DateTimeParseException ex) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, "Invalid date/time format"));
     }
 
     @ExceptionHandler(DuplicateUsernameException.class)
-    public ResponseEntity<?> handleDuplicateUsername(DuplicateUsernameException ex) {
-        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    public ResponseEntity<Map<String, String>> handleDuplicateUsername(DuplicateUsernameException ex) {
+        return ResponseEntity.badRequest().body(Map.of(ERROR, ex.getMessage()));
     }
 }

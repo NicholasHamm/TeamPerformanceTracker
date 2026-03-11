@@ -57,7 +57,7 @@ public class UploadPerformanceService {
         }
         double distancePerMin = request.getTotalDistance() / session.getDuration();
 
-        PlayerPerformance performance = new PlayerPerformance(
+        return new PlayerPerformance(
                 player,
                 session,
                 request.getTotalDistance(),
@@ -66,7 +66,6 @@ public class UploadPerformanceService {
                 request.getTopSpeed(),
                 request.getEffortRating()
         );
-        return performance;
     }
 
     private PlayerPerformanceResponse toResponse(PlayerPerformance performance) {
