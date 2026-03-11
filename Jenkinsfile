@@ -16,7 +16,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                deleteDir()
                 checkout scm
             }
         }
@@ -40,7 +39,7 @@ pipeline {
 
         stage('API Tests (Karate)') {
             steps {
-                bat 'mvn -B test -Dtest=TestRunner'
+                bat 'mvn -B test -Dtest=KarateIT'
             }
             post {
                 always {
@@ -85,34 +84,21 @@ pipeline {
     post {
         always {
             junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml, target/failsafe-reports/*.xml'
-
-            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true, allowEmptyArchive: true
-            archiveArtifacts artifacts: 'target/screenshots/**', allowEmptyArchive: true
-            archiveArtifacts artifacts: 'target/karate-reports/**', allowEmptyArchive: true
-
-            script {
-                if (fileExists('target/site/jacoco/index.html')) {
-                    publishHTML(target: [
-                        reportDir: 'target/site/jacoco',
-                        reportFiles: 'index.html',
-                        reportName: 'JaCoCo Code Coverage',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-                }
-            }
-
-            script {
-                if (fileExists('target/karate-reports/karate-summary.html')) {
-                    publishHTML(target: [
-                        reportDir: 'target/karate-reports',
-                        reportFiles: 'karate-summary.html',
-                        reportName: 'Karate Summary',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-                }
-            }
+            archiveArtifacts artifacts: 'target/**/*', fingerprint: true
+	        publishHTML(target: [
+	            reportDir: 'target/site/jacoco',
+	            reportFiles: 'index.html',
+	            reportName: 'JaCoCo Code Coverage',
+	            keepAll: true,
+	            alwaysLinkToLastBuild: true
+	        ])
+	        publishHTML(target: [
+	            reportDir: 'target/karate-reports',
+	            reportFiles: 'karate-summary.html',
+	            reportName: 'Karate Summary',
+	            keepAll: true,
+	            alwaysLinkToLastBuild: true
+	        ])
         }
     }
 }
