@@ -3,7 +3,6 @@ pipeline {
 
     tools {
         maven 'Maven_3'
-        // jdk 'JDK21'
     }
 
     parameters {
@@ -17,60 +16,103 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                deleteDir()
                 checkout scm
             }
         }
 
-        stage('Build and Unit Tests') {
+        stage('Build') {
             steps {
-                bat 'mvn -B -V clean test'
+                bat 'mvn -B clean compile'
             }
         }
 
-        stage('UI Tests (Karate & Selenium)') {
+        stage('Unit Tests (JUnit)') {
+            steps {
+                bat 'mvn -B test'
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('API Tests (Karate)') {
+            steps {
+                bat 'mvn -B test -Dtest=TestRunner'
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+                    archiveArtifacts artifacts: 'target/karate-reports/**', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('UI Tests (Selenium)') {
             when {
                 expression { return params.RUN_UI_TESTS }
             }
             steps {
-                bat 'mvn -B verify -DskipUnitTests=true'
+                bat 'mvn -B verify -Pselenium'
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'target/failsafe-reports/*.xml'
+                    archiveArtifacts artifacts: 'target/screenshots/**', allowEmptyArchive: true
+                }
             }
         }
 
         stage('SonarQube Analysis') {
-          steps {
-            withSonarQubeEnv('LocalSonar') {
-              bat 'mvn -B sonar:sonar -Dsonar.projectKey=TeamPerformanceTracker -Dsonar.projectName=TeamPerformanceTracker'
+            steps {
+                withSonarQubeEnv('LocalSonar') {
+                    bat 'mvn -B sonar:sonar -Dsonar.projectKey=TeamPerformanceTracker -Dsonar.projectName=TeamPerformanceTracker'
+                }
             }
-          }
         }
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 2, unit: 'MINUTES') {
+                timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
-    	}
+        }
     }
 
     post {
         always {
             junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml, target/failsafe-reports/*.xml'
-            archiveArtifacts artifacts: 'target/**/*', fingerprint: true
-	        publishHTML(target: [
-	            reportDir: 'target/site/jacoco',
-	            reportFiles: 'index.html',
-	            reportName: 'JaCoCo Code Coverage',
-	            keepAll: true,
-	            alwaysLinkToLastBuild: true
-	        ])
-	        publishHTML(target: [
-	            reportDir: 'target/karate-reports',
-	            reportFiles: 'karate-summary.html',
-	            reportName: 'Karate Summary',
-	            keepAll: true,
-	            alwaysLinkToLastBuild: true
-	        ])
-	    }
-	}
+
+            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true, allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/screenshots/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/karate-reports/**', allowEmptyArchive: true
+
+            script {
+                if (fileExists('target/site/jacoco/index.html')) {
+                    publishHTML(target: [
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Code Coverage',
+                        keepAll: true,
+                        alwaysLinkToLastBuild: true
+                    ])
+                }
+            }
+
+            script {
+                if (fileExists('target/karate-reports/karate-summary.html')) {
+                    publishHTML(target: [
+                        reportDir: 'target/karate-reports',
+                        reportFiles: 'karate-summary.html',
+                        reportName: 'Karate Summary',
+                        keepAll: true,
+                        alwaysLinkToLastBuild: true
+                    ])
+                }
+            }
+        }
+    }
 }
