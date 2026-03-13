@@ -72,7 +72,6 @@ public class UploadPerformanceService {
         return new PlayerPerformanceResponse(
                 performance.getPlayer().getId(),
                 performance.getPlayer().getFirstName() + " " + performance.getPlayer().getLastName(),
-                performance.getSession().getId(),
                 performance.getTotalDistance(),
                 performance.getDistancePerMin(),
                 performance.getHighIntensityDistance(),

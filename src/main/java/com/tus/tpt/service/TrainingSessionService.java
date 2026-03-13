@@ -4,6 +4,7 @@ import com.tus.tpt.dao.PlayerPerformanceRepository;
 import com.tus.tpt.dao.TrainingSessionRepository;
 import com.tus.tpt.dao.UserRepository;
 import com.tus.tpt.dto.player.PlayerDto;
+import com.tus.tpt.dto.session.SessionPerformanceResponse;
 import com.tus.tpt.dto.session.TrainingSessionResponse;
 import com.tus.tpt.dto.upload.PlayerPerformanceResponse;
 import com.tus.tpt.model.Role;
@@ -52,24 +53,27 @@ public class TrainingSessionService {
         return toResponse(saved);
     }
 
-    public List<PlayerPerformanceResponse> getUploadedDataForSession(Long sessionId) {
+    public SessionPerformanceResponse getUploadedDataForSession(Long sessionId) {
+
         if (sessionId == null || !trainingSessionRepo.existsById(sessionId)) {
             throw new IllegalArgumentException("Session not found");
         }
 
-        return playerPerformanceRepo.findBySessionId(sessionId)
-                .stream()
-                .map(performance -> new PlayerPerformanceResponse(
-                        performance.getPlayer().getId(),
-                        performance.getPlayer().getFirstName() + " " + performance.getPlayer().getLastName(),
-                        performance.getSession().getId(),
-                        performance.getTotalDistance(),
-                        performance.getDistancePerMin(),
-                        performance.getHighIntensityDistance(),
-                        performance.getTopSpeed(),
-                        performance.getEffortRating()
-                ))
-                .toList();
+        List<PlayerPerformanceResponse> performances =
+                playerPerformanceRepo.findBySessionId(sessionId)
+                        .stream()
+                        .map(performance -> new PlayerPerformanceResponse(
+                                performance.getPlayer().getId(),
+                                performance.getPlayer().getFirstName() + " " + performance.getPlayer().getLastName(),
+                                performance.getTotalDistance(),
+                                performance.getDistancePerMin(),
+                                performance.getHighIntensityDistance(),
+                                performance.getTopSpeed(),
+                                performance.getEffortRating()
+                        ))
+                        .toList();
+
+        return new SessionPerformanceResponse(sessionId, performances);
     }
 
     public List<PlayerDto> getAvailablePlayersForSession(Long sessionId) {
@@ -77,9 +81,10 @@ public class TrainingSessionService {
             throw new IllegalArgumentException("Session not found");
         }
 
-        Set<Long> usedPlayerIds = new java.util.HashSet<>(
-                playerPerformanceRepo.findPlayerIdsBySessionId(sessionId)
-        );
+        Set<Long> usedPlayerIds = playerPerformanceRepo.findBySessionId(sessionId)
+                .stream()
+                .map(pp -> pp.getPlayer().getId())
+                .collect(java.util.stream.Collectors.toSet());
 
         return userRepo.findByRole(Role.PLAYER).stream()
                 .filter(player -> !usedPlayerIds.contains(player.getId()))

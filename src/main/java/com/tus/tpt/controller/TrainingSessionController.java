@@ -2,6 +2,7 @@ package com.tus.tpt.controller;
 
 import com.tus.tpt.dto.player.PlayerDto;
 import com.tus.tpt.dto.session.CreateNewTrainingSession;
+import com.tus.tpt.dto.session.SessionPerformanceResponse;
 import com.tus.tpt.dto.session.TrainingSessionResponse;
 import com.tus.tpt.dto.upload.PlayerPerformanceResponse;
 import com.tus.tpt.dto.upload.UploadPlayerPerformance;
@@ -70,7 +71,7 @@ public class TrainingSessionController {
     }
 
     @GetMapping("/{sessionId}/performance")
-    public List<PlayerPerformanceResponse> getPerformanceForSession(@PathVariable Long sessionId) {
+    public SessionPerformanceResponse getPerformanceForSession(@PathVariable Long sessionId) {
         return trainingSessionService.getUploadedDataForSession(sessionId);
     }
 }

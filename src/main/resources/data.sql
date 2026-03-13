@@ -6,6 +6,3 @@ VALUES
 
 INSERT INTO training_session (datetime, type, duration)
 VALUES ('2026-03-09 18:00:00', 'PITCH', 60);
-
-INSERT INTO training_session_players (session_id, player_id)
-VALUES (1, 3);

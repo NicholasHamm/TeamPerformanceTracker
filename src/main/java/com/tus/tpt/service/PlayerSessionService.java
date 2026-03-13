@@ -19,6 +19,17 @@ public class PlayerSessionService {
             throw new IllegalArgumentException("Username is required");
         }
 
-        return playerPerformanceRepository.findSessionsForPlayerUsername(username);
+        return playerPerformanceRepository.findByPlayer_UsernameIgnoreCaseOrderBySession_DatetimeDesc(username)
+                .stream()
+                .map(pp -> new PlayerSessionResponse(
+                        pp.getSession().getDatetime(),
+                        pp.getSession().getType(),
+                        pp.getSession().getDuration(),
+                        pp.getTotalDistance(),
+                        pp.getHighIntensityDistance(),
+                        pp.getTopSpeed(),
+                        pp.getEffortRating()
+                ))
+                .toList();
     }
 }
