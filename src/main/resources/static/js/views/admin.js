@@ -2,6 +2,14 @@
     'use strict';
 
     const ADMIN_URL = '/api/users';
+
+    const adminNavbar = {
+        items: [
+            { id: 'dashboard', label: 'Admin Dashboard', icon: 'fa-solid fa-house' },
+            { id: 'create-user', label: 'Create User', icon: 'fa-solid fa-user-plus' }
+        ]
+    };
+
     let userTable = null;
 
     const renderAdmin = () => {
@@ -11,8 +19,6 @@
 
         $container.html(`
             <div class="mt-3">
-                <button class="btn btn-primary mb-3" id="addUserBtn">Create New User</button>
-
                 <table id="userTable" class="table table-striped">
                     <thead>
                         <tr>
@@ -89,11 +95,6 @@
         initUserTable();
     };
 
-    window.renderAdmin = () => {
-        renderAdmin();
-        loadAdminData();
-    };
-
     const initUserTable = () => {
         userTable = $('#userTable').DataTable({
             destroy: true,
@@ -167,14 +168,42 @@
         });
     };
 
-    $(() => {
-        $(document).on('click', '#addUserBtn', function () {
-            openCreateUserModal();
-        });
+    const initAdminNavbar = () => {
+        window.renderNavbar({
+            items: adminNavbar.items,
+            onNavigate: (page) => {
+                switch (page) {
+                    case 'dashboard':
+                        renderAdmin();
+                        loadAdminData();
+                        break;
 
-        $(document).on('click', '#saveUserBtn', function () {
-            saveUser();
+                    case 'create-user':
+                        openCreateUserModal();
+                        break;
+                }
+            },
+            onLogout: () => {
+                clearToken();
+                showLogin();
+            }
         });
+    };
+
+    window.renderAdmin = () => {
+        renderAdmin();
+        loadAdminData();
+        initAdminNavbar();
+    };
+
+    window.openCreateUserModal = openCreateUserModal;
+
+    $(document).on('click', '#addUserBtn', function () {
+        openCreateUserModal();
+    });
+
+    $(document).on('click', '#saveUserBtn', function () {
+        saveUser();
     });
 
 })();

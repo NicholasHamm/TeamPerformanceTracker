@@ -1,10 +1,18 @@
 (() => {
     'use strict';
 
-    const PLAYER_SESSION_URL = '/api/player/sessions';
+    const PERFORMANCE_URL = '/api/player/sessions';
+
+    const playerNavbar = {
+        items: [
+            { id: 'sessions', label: 'My Sessions', icon: 'fa-solid fa-calendar-check' },
+            { id: 'trends', label: 'Performance Trends', icon: 'fa-solid fa-chart-column' }
+        ]
+    };
+
     let playerSessionsTable = null;
 
-    const renderPlayer = () => {
+    const renderPlayerView = () => {
         const $container = $('#pageContent');
 
         if (!$container.length) return;
@@ -31,6 +39,32 @@
         `);
     };
 
+    const initPlayerNavbar = () => {
+        window.renderNavbar({
+            items: playerNavbar.items,
+
+            onNavigate: (page) => {
+                switch (page) {
+                    case 'sessions':
+                        renderPlayerView();
+                        loadPlayerSessions();
+                        initPlayerNavbar();
+                        break;
+
+                    case 'trends':
+                        window.renderPlayerTrendsSection();
+                        initPlayerNavbar();
+                        break;
+                }
+            },
+
+            onLogout: () => {
+                clearToken();
+                showLogin();
+            }
+        });
+    };
+
     const loadPlayerSessions = () => {
         if ($.fn.DataTable.isDataTable('#playerSessionTable')) {
             $('#playerSessionTable').DataTable().destroy();
@@ -39,7 +73,7 @@
         playerSessionsTable = $('#playerSessionTable').DataTable({
             destroy: true,
             ajax: {
-                url: PLAYER_SESSION_URL,
+                url: PERFORMANCE_URL,
                 dataSrc: '',
                 headers: authHeaders(),
                 error: function (xhr) {
@@ -61,8 +95,9 @@
     };
 
     window.renderPlayer = () => {
-        renderPlayer();
+        renderPlayerView();
         loadPlayerSessions();
+        initPlayerNavbar();
     };
 
 })();

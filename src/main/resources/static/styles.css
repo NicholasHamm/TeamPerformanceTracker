@@ -28,3 +28,58 @@ tr:nth-child(even) {
 table.dataTable {
     width: 100% !important; /* Force table to fill container width */
 }
+
+/* Nav Bar */
+.navbar-mainbg {
+    background-color: #1f2937;
+    padding: 0.5rem 1rem;
+    border-radius: 14px;
+    margin-top: 1rem;
+}
+
+.navbar-logo {
+    color: #fff !important;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.navbar-nav .nav-item {
+    margin-left: 0.35rem;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    transition: all 0.25s ease;
+    font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.navbar-nav .nav-link.active {
+    color: #111827 !important;
+    background-color: #fbbf24;
+    font-weight: 600;
+}
+
+.navbar-toggler {
+    border: none;
+    outline: none;
+    box-shadow: none !important;
+}
+
+#logoutBtn.nav-link {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+#logoutBtn.nav-link.active,
+#logoutBtn.nav-link:hover {
+    background-color: #dc3545;
+    color: white !important;
+}
