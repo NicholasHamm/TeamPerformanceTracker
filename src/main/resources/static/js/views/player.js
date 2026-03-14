@@ -16,7 +16,6 @@
                 <table id="playerSessionTable" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Session ID</th>
                             <th>Datetime</th>
                             <th>Type</th>
                             <th>Duration</th>
@@ -50,7 +49,6 @@
                 }
             },
             columns: [
-                { data: 'sessionId' },
                 { data: 'datetime' },
                 { data: 'type' },
                 { data: 'duration' },

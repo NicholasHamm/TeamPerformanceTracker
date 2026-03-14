@@ -24,56 +24,28 @@ public class TrainingSession {
     @Column(nullable = false)
     private int duration;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "training_session_players",
-            joinColumns = @JoinColumn(name = "session_id"),
-            inverseJoinColumns = @JoinColumn(name = "player_id")
-    )
-    private Set<User> players = new HashSet<>();
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PlayerPerformance> performances = new HashSet<>();
 
     public TrainingSession(){}
 
-    public TrainingSession(LocalDateTime date, TrainingType type, int duration, Set<User> players) {
+    public TrainingSession(LocalDateTime date, TrainingType type, int duration) {
         this.datetime = date;
         this.type = type;
         this.duration = duration;
-        this.players = players;
+        this.performances = new HashSet<>();
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public LocalDateTime getDatetime() { return datetime; }
+    public void setDatetime(LocalDateTime datetime) { this.datetime = datetime; }
 
-    public LocalDateTime getDatetime() {
-        return datetime;
-    }
+    public TrainingType getType() { return type; }
+    public void setType(TrainingType type) { this.type = type; }
 
-    public void setDatetime(LocalDateTime datetime) {
-        this.datetime = datetime;
-    }
+    public int getDuration() { return duration; }
+    public void setDuration(int duration) { this.duration = duration; }
 
-    public TrainingType getType() {
-        return type;
-    }
-
-    public void setType(TrainingType type) {
-        this.type = type;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public Set<User> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(Set<User> players) {
-        this.players = players;
-    }
+    public Set<PlayerPerformance> getPerformances() { return performances; }
+    public void setPerformances(Set<PlayerPerformance> performances) { this.performances = performances; }
 }

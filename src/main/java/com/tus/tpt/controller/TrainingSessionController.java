@@ -46,13 +46,7 @@ public class TrainingSessionController {
             @Valid @RequestBody CreateNewTrainingSession request
     ) {
 
-        TrainingSession trainingSession = new TrainingSession(
-                LocalDateTime.parse(request.datetime()),
-                TrainingType.valueOf(request.type()),
-                request.duration(),
-                new java.util.HashSet<>()
-        );
-
+        TrainingSession trainingSession = new TrainingSession(LocalDateTime.parse(request.datetime()), TrainingType.valueOf(request.type()), request.duration());
         return ResponseEntity.ok(trainingSessionService.createTrainingSession(trainingSession));
     }
 

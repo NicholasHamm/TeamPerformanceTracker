@@ -1,4 +1,4 @@
-Feature: Training Sessions Player Assignment API
+Feature: Training session find all available players API
 
   Background:
     * url baseUrl

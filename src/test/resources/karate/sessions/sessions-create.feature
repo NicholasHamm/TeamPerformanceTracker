@@ -11,7 +11,7 @@ Feature: Training Sessions CREATE API
     """
     {
       "datetime": "2026-03-09T17:00:00",
-      "type": "GYM",
+      "type": "RECOVERY",
       "duration": 60
     }
     """
@@ -22,7 +22,7 @@ Feature: Training Sessions CREATE API
     {
       id: '#number',
       datetime: '2026-03-09T17:00:00',
-      type: 'GYM',
+      type: 'RECOVERY',
       duration: 60
     }
     """
@@ -35,12 +35,12 @@ Feature: Training Sessions CREATE API
     Then status <status>
 
     Examples:
-      | datetime            | type | duration | status |
-      | 2026-02-09T17:00:00 | GYM  | 60       | 200    |
-      | null                | GYM  | 60       | 400    |
-      | bad-date            | GYM  | 60       | 400    |
-      | 2026-03-09T17:00:00 | null | 60       | 400    |
-      | 2026-03-09T17:00:00 | GYM  | null     | 400    |
-      | 2026-03-09T17:00:00 | BAD  | 60       | 400    |
-      | 2026-03-09T17:00:00 | BAD  | 9        | 400    |
-      | 2026-03-09T17:00:00 | BAD  | 301      | 400    |
+      | datetime            | type  | duration | status |
+      | 2026-02-09T17:00:00 | SPEED | 60       | 200    |
+      | null                | SPEED | 60       | 400    |
+      | bad-date            | SPEED | 60       | 400    |
+      | 2026-03-09T17:00:00 | null  | 60       | 400    |
+      | 2026-03-09T17:00:00 | SPEED | null     | 400    |
+      | 2026-03-09T17:00:00 | BAD   | 60       | 400    |
+      | 2026-03-09T17:00:00 | BAD   | 9        | 400    |
+      | 2026-03-09T17:00:00 | BAD   | 301      | 400    |

@@ -7,9 +7,9 @@ import com.tus.tpt.dto.player.PlayerDto;
 import com.tus.tpt.dto.session.SessionPerformanceResponse;
 import com.tus.tpt.dto.session.TrainingSessionResponse;
 import com.tus.tpt.dto.upload.PlayerPerformanceResponse;
+import com.tus.tpt.model.PlayerPerformance;
 import com.tus.tpt.model.Role;
 import com.tus.tpt.model.TrainingSession;
-import com.tus.tpt.model.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -137,8 +137,9 @@ public class TrainingSessionService {
     }
 
     private TrainingSessionResponse toResponse(TrainingSession session) {
-        Set<PlayerDto> players = (session.getPlayers() == null ? java.util.Set.<User>of() : session.getPlayers())
+        Set<PlayerDto> players = (session.getPerformances() == null ? java.util.Set.<PlayerPerformance>of() : session.getPerformances())
                 .stream()
+                .map(PlayerPerformance::getPlayer)
                 .map(u -> new PlayerDto(u.getId(), u.getFirstName(), u.getLastName()))
                 .collect(java.util.stream.Collectors.toSet());
 

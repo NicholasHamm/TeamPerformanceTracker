@@ -13,18 +13,8 @@ CREATE TABLE IF NOT EXISTS `training_session` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `datetime` DATETIME NOT NULL,
   `type` varchar(30) NOT NULL,
-  `duration` BIGINT NOT NULL,
+  `duration` INT NOT NULL,
   PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `training_session_players` (
-  `session_id` BIGINT NOT NULL,
-  `player_id` BIGINT NOT NULL,
-  PRIMARY KEY (`session_id`, `player_id`),
-  CONSTRAINT `fk_tsp_session`
-    FOREIGN KEY (`session_id`) REFERENCES `training_session` (`id`),
-  CONSTRAINT `fk_tsp_user`
-    FOREIGN KEY (`player_id`) REFERENCES `users` (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `player_performance` (

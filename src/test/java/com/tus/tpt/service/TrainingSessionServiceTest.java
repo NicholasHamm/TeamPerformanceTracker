@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import com.tus.tpt.dto.session.SessionPerformanceResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,7 +39,7 @@ class TrainingSessionServiceTest {
     private TrainingSession session;
     private User player1;
     private User player2;
-    private User coach;
+    private PlayerPerformance performance1;
 
     @BeforeEach
     void setUp() {
@@ -50,9 +51,9 @@ class TrainingSessionServiceTest {
 
         session = new TrainingSession();
         session.setDatetime(LocalDateTime.now().minusDays(1));
-        session.setType(TrainingType.GYM);
+        session.setType(TrainingType.CONDITIONING);
         session.setDuration(60);
-        session.setPlayers(new HashSet<>());
+        session.setPerformances(new HashSet<>());
 
         player1 = new User();
         player1.setUsername("player1");
@@ -66,25 +67,29 @@ class TrainingSessionServiceTest {
         player2.setLastName("Jones");
         player2.setRole(Role.PLAYER);
 
-        coach = new User();
-        coach.setUsername("coach1");
-        coach.setFirstName("John");
-        coach.setLastName("Coach");
-        coach.setRole(Role.COACH);
+        performance1 = new PlayerPerformance();
+        performance1.setSession(session);
+        performance1.setPlayer(player1);
+        performance1.setTotalDistance(9500.0);
+        performance1.setDistancePerMin(105.5);
+        performance1.setHighIntensityDistance(1200.0);
+        performance1.setTopSpeed(31.2);
+        performance1.setEffortRating(8);
+
     }
 
     @Test
     void findAllTrainingSessionsSuccess() {
-        session.getPlayers().add(player1);
+        session.getPerformances().add(performance1);
         when(trainingSessionRepo.findAll()).thenReturn(List.of(session));
 
         List<TrainingSessionResponse> result = service.findAllTrainingSessions();
 
         assertEquals(1, result.size());
-        assertNull(result.get(0).id());
-        assertEquals(TrainingType.GYM, result.get(0).type());
-        assertEquals(60, result.get(0).duration());
-        assertEquals(1, result.get(0).players().size());
+        assertNull(result.getFirst().id());
+        assertEquals(TrainingType.CONDITIONING, result.getFirst().type());
+        assertEquals(60, result.getFirst().duration());
+        assertEquals(1, result.getFirst().players().size());
         verify(trainingSessionRepo, times(1)).findAll();
     }
 
@@ -136,7 +141,7 @@ class TrainingSessionServiceTest {
     @Test
     void getAvailablePlayersForSessionSuccess() {
         when(trainingSessionRepo.existsById(1L)).thenReturn(true);
-        when(playerPerformanceRepo.findPlayerIdsBySessionId(1L)).thenReturn(List.of(10L));
+        when(playerPerformanceRepo.existsByPlayerIdAndSessionId(player1.getId(), 1L)).thenReturn(true);
         when(userRepo.findByRole(Role.PLAYER)).thenReturn(List.of(player1, player2));
 
         List<PlayerDto> result = service.getAvailablePlayersForSession(1L);
@@ -213,9 +218,9 @@ class TrainingSessionServiceTest {
     void validateTrainingSessionOverlap() {
         TrainingSession existing = new TrainingSession();
         existing.setDatetime(session.getDatetime().minusMinutes(30));
-        existing.setType(TrainingType.PITCH);
+        existing.setType(TrainingType.CONDITIONING);
         existing.setDuration(90);
-        existing.setPlayers(new HashSet<>());
+        existing.setPerformances(new HashSet<>());
 
         when(trainingSessionRepo.findAll()).thenReturn(List.of(existing));
 
@@ -291,28 +296,18 @@ class TrainingSessionServiceTest {
     @Test
     void getUploadedDataForSessionTest() {
         Long sessionId = 1L;
-        
-        PlayerPerformance performance = new PlayerPerformance();
-        performance.setPlayer(player1);
-        performance.setSession(session);
-        performance.setTotalDistance(9500.0);
-        performance.setDistancePerMin(105.5);
-        performance.setHighIntensityDistance(1200.0);
-        performance.setTopSpeed(31.2);
-        performance.setEffortRating(8);
 
         when(trainingSessionRepo.existsById(sessionId)).thenReturn(true);
-        when(playerPerformanceRepo.findBySessionId(sessionId)).thenReturn(List.of(performance));
+        when(playerPerformanceRepo.findBySessionId(sessionId)).thenReturn(List.of(performance1));
 
-        List<PlayerPerformanceResponse> result = service.getUploadedDataForSession(sessionId);
+        SessionPerformanceResponse result = service.getUploadedDataForSession(sessionId);
 
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(1, result.performances().size());
 
-        PlayerPerformanceResponse response = result.get(0);
+        PlayerPerformanceResponse response = result.performances().getFirst();
         assertEquals(player1.getId(), response.playerId());
         assertEquals("Mike Player", response.playerName());
-        assertEquals(session.getId(), response.sessionId());
         assertEquals(9500.0, response.totalDistance());
         assertEquals(105.5, response.distancePerMin());
         assertEquals(1200.0, response.highIntensityDistance());

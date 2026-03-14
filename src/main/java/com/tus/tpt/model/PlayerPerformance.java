@@ -15,11 +15,11 @@ public class PlayerPerformance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "player_id", nullable = false)
     private User player;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "session_id", nullable = false)
     private TrainingSession session;
 
@@ -40,9 +40,13 @@ public class PlayerPerformance {
 
     public PlayerPerformance() {}
 
-    public PlayerPerformance(User player, TrainingSession session, Double totalDistance,
-                             Double distancePerMin, Double highIntensityDistance,
-                             Double topSpeed, Integer effortRating) {
+    public PlayerPerformance(User player,
+                             TrainingSession session,
+                             Double totalDistance,
+                             Double distancePerMin,
+                             Double highIntensityDistance,
+                             Double topSpeed,
+                             Integer effortRating) {
         this.player = player;
         this.session = session;
         this.totalDistance = totalDistance;
@@ -53,18 +57,25 @@ public class PlayerPerformance {
     }
 
     public Long getId() { return id; }
+
     public User getPlayer() { return player; }
     public void setPlayer(User player) { this.player = player; }
+
     public TrainingSession getSession() { return session; }
     public void setSession(TrainingSession session) { this.session = session; }
+
     public Double getTotalDistance() { return totalDistance; }
     public void setTotalDistance(Double totalDistance) { this.totalDistance = totalDistance; }
+
     public Double getDistancePerMin() { return distancePerMin; }
     public void setDistancePerMin(Double distancePerMin) { this.distancePerMin = distancePerMin; }
+
     public Double getHighIntensityDistance() { return highIntensityDistance; }
     public void setHighIntensityDistance(Double highIntensityDistance) { this.highIntensityDistance = highIntensityDistance; }
+
     public Double getTopSpeed() { return topSpeed; }
     public void setTopSpeed(Double topSpeed) { this.topSpeed = topSpeed; }
+
     public Integer getEffortRating() { return effortRating; }
     public void setEffortRating(Integer effortRating) { this.effortRating = effortRating; }
 }

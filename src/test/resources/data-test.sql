@@ -5,7 +5,11 @@ VALUES
 (3, 'player1', '$2a$10$aA6ZRYzrYqGLVIPpphv54.O2H.i6.iKFbWjwO3Jfip.8lNpi.MeKa', 'Mike', 'Player', 'PLAYER');
 
 INSERT INTO training_session (datetime, type, duration)
-VALUES ('2026-03-09 18:00:00', 'PITCH', 60);
+VALUES
+('2026-03-09 18:00:00', 'RECOVERY', 50),
+('2026-03-10 18:00:00', 'MATCH_SIMULATION', 50);
 
-INSERT INTO training_session_players (session_id, player_id)
-VALUES (1, 3);
+INSERT IGNORE INTO player_performance
+(player_id, session_id, total_distance, distance_per_min, high_intensity_distance, top_speed, effort_rating)
+VALUES
+(3, 2, 5000, 100, 800, 12.2, 7);

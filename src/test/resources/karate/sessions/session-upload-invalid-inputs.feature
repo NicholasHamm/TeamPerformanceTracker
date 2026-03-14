@@ -1,11 +1,11 @@
-Feature: Upload Player Performance API
+Feature: Upload Player Performance API with invalid inputs
 
   Background:
     * url baseUrl
     * def login = callonce read('classpath:karate/helpers/coach-token.feature')
     * header Authorization = 'Bearer ' + login.authToken
 
-  Scenario Outline: Upload player performance examples
+  Scenario Outline: Upload player performance invalid inputs for a session
     Given path 'api/sessions/1/performance'
     And request
   """
