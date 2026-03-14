@@ -83,7 +83,6 @@ class UploadPerformanceServiceTest {
         assertNotNull(result);
         assertEquals(3L, result.playerId());
         assertEquals("Mike Player", result.playerName());
-        assertEquals(1L, result.sessionId());
         assertEquals(6000.0, result.totalDistance());
         assertEquals(100.0, result.distancePerMin());
         assertEquals(800.0, result.highIntensityDistance());

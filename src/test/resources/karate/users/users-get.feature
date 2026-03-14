@@ -1,4 +1,4 @@
-Feature: User Management API
+Feature: User Management GET API
 
   Background:
     * url baseUrl
