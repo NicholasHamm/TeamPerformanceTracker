@@ -40,7 +40,12 @@
             },
             columns: [
                 { data: 'id' },
-                { data: 'datetime' },
+				{
+				    data: 'datetime',
+				    render: function (data) {
+				        return formatDateGMT(data);
+				    }
+				},
                 { data: 'type' },
                 { data: 'duration' },
                 {
@@ -70,6 +75,8 @@
 
         const form = $('#sessionForm')[0];
         if (form) form.reset();
+		
+		$('#createDatetime').val(getDefaultSessionDateTime());
 
         hideMsg(document.getElementById('createSessionError'));
         $('#sessionModal').modal('show');

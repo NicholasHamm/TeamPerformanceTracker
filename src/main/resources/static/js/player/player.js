@@ -83,7 +83,12 @@
                 }
             },
             columns: [
-                { data: 'datetime' },
+				{
+				    data: 'datetime',
+				    render: function (data) {
+				        return formatDateGMT(data);
+				    }
+				},
                 { data: 'type' },
                 { data: 'duration' },
                 { data: 'totalDistance' },

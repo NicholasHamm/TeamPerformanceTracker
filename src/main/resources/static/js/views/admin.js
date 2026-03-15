@@ -154,16 +154,9 @@
                     return;
                 }
 
-                let message = 'Failed to save user';
-
-                if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                } else if (xhr.responseText) {
-                    message = xhr.responseText;
-                }
-
-                const msgBox = document.getElementById('createUserError');
-                showMsg(msgBox, message, 'danger');
+				const message = extractErrorMessage(xhr, 'Failed to save user');
+				const msgBox = document.getElementById('createUserError');
+				showMsg(msgBox, message, 'danger');
             }
         });
     };

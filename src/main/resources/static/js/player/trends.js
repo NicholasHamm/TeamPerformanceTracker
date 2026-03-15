@@ -87,6 +87,9 @@
                 </div>
             </div>
         `);
+		
+		$('#trendStartDate').val(getTodayDate());
+		$('#trendEndDate').val(getTodayDate());
     };
 
     const calculateAverage = (data, field) => {

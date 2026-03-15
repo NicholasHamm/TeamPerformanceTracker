@@ -29,7 +29,7 @@ public class UploadPerformanceService {
 
     public PlayerPerformanceResponse uploadPlayerData(Long sessionId, UploadPlayerPerformance request) {
         User player = userRepository.findById(request.getPlayerId())
-                .orElseThrow(() -> new IllegalArgumentException("Player not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Please select an existing player"));
 
         if (player.getRole() != Role.PLAYER) {
             throw new IllegalArgumentException("User is not a player");
