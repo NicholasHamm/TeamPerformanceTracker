@@ -74,17 +74,23 @@
                     </li>
                 </ul>
 
-                <div class="tab-content" id="trendTabContent">
-                    <div class="tab-pane fade show active" id="distance-pane" role="tabpanel">
-                        <canvas id="distanceChart" height="120"></canvas>
-                    </div>
-                    <div class="tab-pane fade" id="speed-pane" role="tabpanel">
-                        <canvas id="speedChart" height="120"></canvas>
-                    </div>
-                    <div class="tab-pane fade" id="effort-pane" role="tabpanel">
-                        <canvas id="effortChart" height="120"></canvas>
-                    </div>
-                </div>
+				<div class="tab-content" id="trendTabContent">
+				    <div class="tab-pane fade show active" id="distance-pane" role="tabpanel">
+				        <div class="trend-chart-box">
+				            <canvas id="distanceChart"></canvas>
+				        </div>
+				    </div>
+				    <div class="tab-pane fade" id="speed-pane" role="tabpanel">
+				        <div class="trend-chart-box">
+				            <canvas id="speedChart"></canvas>
+				        </div>
+				    </div>
+				    <div class="tab-pane fade" id="effort-pane" role="tabpanel">
+				        <div class="trend-chart-box">
+				            <canvas id="effortChart"></canvas>
+				        </div>
+				    </div>
+				</div>
             </div>
         `);
 		
@@ -101,90 +107,6 @@
     const updateTrendSummary = (label, value) => {
         $('#trendSummaryLabel').text(label);
         $('#trendSummaryValue').text(value);
-    };
-
-    const renderTrendCharts = (data) => {
-        const labels = data.map(item => item.datetime.split('T')[0]);
-        const totalDistance = data.map(item => item.totalDistance);
-        const topSpeed = data.map(item => item.topSpeed);
-        const effortRating = data.map(item => item.effortRating);
-
-        if (distanceChart) distanceChart.destroy();
-        if (speedChart) speedChart.destroy();
-        if (effortChart) effortChart.destroy();
-
-        distanceChart = new Chart(document.getElementById('distanceChart'), {
-            type: 'line',
-            data: {
-                labels,
-                datasets: [{
-                    label: 'Total Distance (m)',
-                    data: totalDistance
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-
-        speedChart = new Chart(document.getElementById('speedChart'), {
-            type: 'line',
-            data: {
-                labels,
-                datasets: [{
-                    label: 'Top Speed (m/s)',
-                    data: topSpeed
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-
-        effortChart = new Chart(document.getElementById('effortChart'), {
-            type: 'bar',
-            data: {
-                labels,
-                datasets: [{
-                    label: 'Effort Rating',
-                    data: effortRating
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-
-        updateTrendSummary(
-            'Average Total Distance',
-            calculateAverage(data, 'totalDistance')
-        );
-    };
-
-    const bindTrendTabEvents = (data) => {
-        $('#distance-tab').off('shown.bs.tab').on('shown.bs.tab', function () {
-            updateTrendSummary(
-                'Average Total Distance',
-                calculateAverage(data, 'totalDistance')
-            );
-        });
-
-        $('#speed-tab').off('shown.bs.tab').on('shown.bs.tab', function () {
-            updateTrendSummary(
-                'Average Top Speed',
-                calculateAverage(data, 'topSpeed')
-            );
-        });
-
-        $('#effort-tab').off('shown.bs.tab').on('shown.bs.tab', function () {
-            updateTrendSummary(
-                'Average Effort Rating',
-                calculateAverage(data, 'effortRating')
-            );
-        });
     };
 
     const applyTrendFilter = () => {
@@ -229,25 +151,25 @@
             type: 'GET',
             url: PERFORMANCE_URL,
             headers: authHeaders(),
-            success: function (data) {
-                allTrendData = data || [];
+			success: function (data) {
+			    allTrendData = data || [];
 
-                if (!allTrendData.length) {
-                    $('#noTrendDataMsg').removeClass('d-none');
-                    $('#trendSummaryCard').addClass('d-none');
-                    $('#trendTabs').addClass('d-none');
-                    $('#trendTabContent').addClass('d-none');
-                    return;
-                }
+			    if (!allTrendData.length) {
+			        $('#noTrendDataMsg').removeClass('d-none');
+			        $('#trendSummaryCard').addClass('d-none');
+			        $('#trendTabs').addClass('d-none');
+			        $('#trendTabContent').addClass('d-none');
+			        return;
+			    }
 
-                $('#noTrendDataMsg').addClass('d-none');
-                $('#trendSummaryCard').removeClass('d-none');
-                $('#trendTabs').removeClass('d-none');
-                $('#trendTabContent').removeClass('d-none');
+			    $('#noTrendDataMsg').addClass('d-none');
+			    $('#trendSummaryCard').removeClass('d-none');
+			    $('#trendTabs').removeClass('d-none');
+			    $('#trendTabContent').removeClass('d-none');
 
-                renderTrendCharts(allTrendData);
-                bindTrendTabEvents(allTrendData);
-            },
+			    renderTrendCharts(allTrendData);
+			    bindTrendTabEvents(allTrendData);
+			},
             error: function (xhr) {
                 if (xhr.status === 401 || xhr.status === 403) {
                     handleUnauthorized();
@@ -255,6 +177,162 @@
             }
         });
     };
+	
+	const renderDistanceChart = (sortedData) => {
+
+	    const labels = sortedData.map(item => item.datetime.split('T')[0]);
+	    const totalDistance = sortedData.map(item => item.totalDistance);
+	    const highIntensityDistance = sortedData.map(item => item.highIntensityDistance);
+
+	    if (distanceChart) distanceChart.destroy();
+
+	    distanceChart = new Chart(document.getElementById('distanceChart'), {
+	        type: 'line',
+	        data: {
+	            labels,
+				datasets: [
+				{
+				    label: 'High Intensity Distance (m)',
+				    data: highIntensityDistance,
+				    tension: 0.3,
+				    fill: 'origin',
+				    borderColor: 'rgb(255, 99, 132)',
+				    backgroundColor: 'rgba(255, 99, 132, 0.4)'
+				},
+				{
+				    label: 'Remaining Distance (m)',
+				    data: totalDistance,
+				    tension: 0.3,
+				    fill: '-1',
+				    borderColor: 'rgb(54, 162, 235)',
+				    backgroundColor: 'rgba(54, 162, 235, 0.3)'
+				}
+				]
+	        },
+	        options: {
+	            responsive: true,
+	            maintainAspectRatio: false,
+	            scales: {
+	                x: {
+	                    ticks: {
+	                        autoSkip: true,
+	                        maxTicksLimit: 8
+	                    }
+	                },
+	                y: {
+	                    beginAtZero: true,
+	                    title: {
+	                        display: true,
+	                        text: 'Distance (meters)'
+	                    }
+	                }
+	            }
+	        }
+	    });
+	};
+
+	const renderSpeedChart = (sortedData) => {
+	    const labels = sortedData.map(item => item.datetime.split('T')[0]);
+	    const topSpeed = sortedData.map(item => item.topSpeed);
+
+	    if (speedChart) speedChart.destroy();
+
+	    speedChart = new Chart(document.getElementById('speedChart'), {
+	        type: 'line',
+	        data: {
+	            labels,
+	            datasets: [{
+	                label: 'Top Speed (m/s)',
+	                data: topSpeed
+	            }]
+	        },
+	        options: {
+	            responsive: true,
+	            maintainAspectRatio: false
+	        }
+	    });
+	};
+
+	const renderEffortChart = (sortedData) => {
+
+	    const bins = new Array(10).fill(0); // ratings 1–10
+
+	    sortedData.forEach(item => {
+	        const rating = Number(item.effortRating);
+	        if (rating >= 1 && rating <= 10) {
+	            bins[rating - 1]++;
+	        }
+	    });
+
+	    const labels = bins.map((_, i) => `${i + 1}`);
+
+	    if (effortChart) effortChart.destroy();
+
+	    effortChart = new Chart(document.getElementById('effortChart'), {
+	        type: 'bar',
+	        data: {
+	            labels: labels,
+	            datasets: [{
+	                label: 'Effort Rating Frequency',
+	                data: bins
+	            }]
+	        },
+	        options: {
+	            responsive: true,
+	            maintainAspectRatio: false,
+	            scales: {
+	                x: {
+	                    title: {
+	                        display: true,
+	                        text: 'Effort Rating'
+	                    }
+	                },
+	                y: {
+	                    beginAtZero: true,
+	                    title: {
+	                        display: true,
+	                        text: 'Number of Sessions'
+	                    },
+	                    ticks: {
+	                        precision: 0
+	                    }
+	                }
+	            }
+	        }
+	    });
+	};
+
+	const renderTrendCharts = (data) => {
+	    const sortedData = [...data].sort(
+	        (a, b) => new Date(a.datetime) - new Date(b.datetime)
+	    );
+
+	    renderDistanceChart(sortedData);
+	    renderSpeedChart(sortedData);
+	    renderEffortChart(sortedData);
+
+	    updateTrendSummary(
+	        'Average Total Distance',
+	        calculateAverage(sortedData, 'totalDistance')
+	    );
+	};
+	
+	const bindTrendTabEvents = (data) => {
+	    $('#distance-tab').off('shown.bs.tab').on('shown.bs.tab', function () {
+	        if (distanceChart) distanceChart.resize();
+	        updateTrendSummary('Average Total Distance', calculateAverage(data, 'totalDistance'));
+	    });
+
+	    $('#speed-tab').off('shown.bs.tab').on('shown.bs.tab', function () {
+	        if (speedChart) speedChart.resize();
+	        updateTrendSummary('Average Top Speed', calculateAverage(data, 'topSpeed'));
+	    });
+
+	    $('#effort-tab').off('shown.bs.tab').on('shown.bs.tab', function () {
+	        if (effortChart) effortChart.resize();
+	        updateTrendSummary('Average Effort Rating', calculateAverage(data, 'effortRating'));
+	    });
+	};
 
     window.renderPlayerTrendsSection = () => {
         renderTrendsView();
