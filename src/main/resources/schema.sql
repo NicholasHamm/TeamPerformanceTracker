@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS player_performance;
+DROP TABLE IF EXISTS training_session;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE IF NOT EXISTS `users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,

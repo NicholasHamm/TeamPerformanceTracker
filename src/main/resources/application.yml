@@ -7,8 +7,7 @@ spring:
     password: root
   jpa:
     hibernate:
-      ddl-auto: create
-    defer-datasource-initialization: true
+      ddl-auto: none
     show-sql: true
   sql:
     init:
@@ -22,7 +21,7 @@ error:
 
 jwt:
   secret: "ThisIsADevelopmentOnlyJwtSecretKeyThatIsAtLeastThirtyTwoBytesLong!"
-  expiration: 3600000  # 1 hour
+  expiration: 3600000
 
 logging:
   level:

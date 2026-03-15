@@ -50,8 +50,18 @@
         if (!msgBox) return;
         msgBox.classList.add('d-none');
     };
+	
+	const extractErrorMessage = (xhr, fallbackMessage) => {
+	    if (xhr.responseJSON?.message) return xhr.responseJSON.message;
+	    if (xhr.responseJSON?.error) return xhr.responseJSON.error;
+	    if (typeof xhr.responseText === 'string' && xhr.responseText.trim().length > 0) {
+	        return xhr.responseText;
+	    }
+	    return fallbackMessage;
+	};
 
     // expose globally so other scripts can use them
+	window.extractErrorMessage = extractErrorMessage;
     window.showMsg = showMsg;
     window.hideMsg = hideMsg;
 

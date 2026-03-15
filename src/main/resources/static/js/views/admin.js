@@ -2,6 +2,14 @@
     'use strict';
 
     const ADMIN_URL = '/api/users';
+
+    const adminNavbar = {
+        items: [
+            { id: 'dashboard', label: 'Admin Dashboard', icon: 'fa-solid fa-house' },
+            { id: 'create-user', label: 'Create User', icon: 'fa-solid fa-user-plus' }
+        ]
+    };
+
     let userTable = null;
 
     const renderAdmin = () => {
@@ -11,8 +19,10 @@
 
         $container.html(`
             <div class="mt-3">
-                <button class="btn btn-primary mb-3" id="addUserBtn">Create New User</button>
-
+				<div id="createUserSuccess" class="alert d-none d-flex align-items-center gap-2">
+                    <i class="bi fs-5 flex-shrink-0"></i>
+                    <div class="msg-text"></div>
+                </div>
                 <table id="userTable" class="table table-striped">
                     <thead>
                         <tr>
@@ -89,11 +99,6 @@
         initUserTable();
     };
 
-    window.renderAdmin = () => {
-        renderAdmin();
-        loadAdminData();
-    };
-
     const initUserTable = () => {
         userTable = $('#userTable').DataTable({
             destroy: true,
@@ -143,6 +148,7 @@
             data: JSON.stringify(user),
             success: function () {
                 $('#userModal').modal('hide');
+				showMsg(document.getElementById('createUserSuccess'), `User: [${user.username}] created successfully`, 'success');
                 if (userTable) {
                     userTable.ajax.reload();
                 }
@@ -153,28 +159,49 @@
                     return;
                 }
 
-                let message = 'Failed to save user';
-
-                if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                } else if (xhr.responseText) {
-                    message = xhr.responseText;
-                }
-
-                const msgBox = document.getElementById('createUserError');
-                showMsg(msgBox, message, 'danger');
+				const message = extractErrorMessage(xhr, 'Failed to save user');
+				const msgBox = document.getElementById('createUserError');
+				showMsg(msgBox, message, 'danger');
             }
         });
     };
 
-    $(() => {
-        $(document).on('click', '#addUserBtn', function () {
-            openCreateUserModal();
-        });
+    const initAdminNavbar = () => {
+        window.renderNavbar({
+            items: adminNavbar.items,
+            onNavigate: (page) => {
+                switch (page) {
+                    case 'dashboard':
+                        renderAdmin();
+                        loadAdminData();
+                        break;
 
-        $(document).on('click', '#saveUserBtn', function () {
-            saveUser();
+                    case 'create-user':
+                        openCreateUserModal();
+                        break;
+                }
+            },
+            onLogout: () => {
+                clearToken();
+                showLogin();
+            }
         });
+    };
+
+    window.renderAdmin = () => {
+        renderAdmin();
+        loadAdminData();
+        initAdminNavbar();
+    };
+
+    window.openCreateUserModal = openCreateUserModal;
+
+    $(document).on('click', '#addUserBtn', function () {
+        openCreateUserModal();
+    });
+
+    $(document).on('click', '#saveUserBtn', function () {
+        saveUser();
     });
 
 })();

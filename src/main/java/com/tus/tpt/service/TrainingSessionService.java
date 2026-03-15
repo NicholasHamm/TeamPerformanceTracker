@@ -131,7 +131,7 @@ public class TrainingSessionService {
             throw new IllegalArgumentException("Training type is required");
         }
 
-        if (trainingSession.getDuration() <= MIN_DURATION || trainingSession.getDuration() > MAX_DURATION) {
+        if (trainingSession.getDuration() < MIN_DURATION || trainingSession.getDuration() >= MAX_DURATION) {
             throw new IllegalArgumentException("Duration must be between "+ MIN_DURATION +" and "+ MAX_DURATION +" minutes");
         }
     }

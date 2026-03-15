@@ -45,8 +45,16 @@ public class TrainingSessionController {
     public ResponseEntity<TrainingSessionResponse> createSession(
             @Valid @RequestBody CreateNewTrainingSession request
     ) {
+        if (request.type() == null || request.type().isBlank()) {
+            throw new IllegalArgumentException("Training Type must be selected");
+        }
 
-        TrainingSession trainingSession = new TrainingSession(LocalDateTime.parse(request.datetime()), TrainingType.valueOf(request.type()), request.duration());
+        TrainingSession trainingSession = new TrainingSession(
+                LocalDateTime.parse(request.datetime()),
+                TrainingType.valueOf(request.type()),
+                request.duration()
+        );
+
         return ResponseEntity.ok(trainingSessionService.createTrainingSession(trainingSession));
     }
 
