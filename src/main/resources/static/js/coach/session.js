@@ -7,6 +7,10 @@
     function renderSessionsSection() {
         $('#sessionsListSection').html(`
            <h2 class="mb-3">Training Sessions</h2><table id="sessionTable" class="table table-striped">
+		   		<div id="createSessionSuccess" class="alert d-none d-flex align-items-center gap-2">
+                   <i class="bi fs-5 flex-shrink-0"></i>
+                   <div class="msg-text"></div>
+               </div>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -97,6 +101,7 @@
             data: JSON.stringify(trainingSession),
             success: function () {
                 $('#sessionModal').modal('hide');
+				showMsg(document.getElementById('createSessionSuccess'), 'Training session created successfully', 'success');
                 if (sessionsTable) sessionsTable.ajax.reload();
             },
             error: function (xhr) {

@@ -8,7 +8,7 @@
         const session = window.coachPage.getSelectedSession();
 
         $('#sessionDetailsSection').html(`
-            <div id="uploadErrorMsg" class="alert d-none d-flex align-items-center gap-2">
+            <div id="uploadMsg" class="alert d-none d-flex align-items-center gap-2">
                 <i class="bi fs-5 flex-shrink-0"></i>
                 <div class="msg-text"></div>
             </div>
@@ -89,98 +89,104 @@
         });
     }
 
-    const openPerformanceModal = () => {
+	const openPerformanceModal = () => {
+	    const sessionId = window.coachPage.getSelectedSessionId();
+	    if (!sessionId) return;
 
-        const sessionId = window.coachPage.getSelectedSessionId();
+	    const msgBox = document.getElementById('uploadMsg');
+	    hideMsg(msgBox);
 
-        if (!sessionId) {
-            return;
-        }
+	    const form = $('#performanceForm')[0];
+	    if (form) form.reset();
 
-        hideMsg(document.getElementById('uploadErrorMsg'));
+	    hideMsg(document.getElementById('createPerformanceError'));
 
-        const form = $('#performanceForm')[0];
-        if (form) form.reset();
+	    loadPlayersIntoSelect(sessionId);
+	};
 
-        hideMsg(document.getElementById('createPerformanceError'));
+	function savePerformance() {
+	    const sessionId = window.coachPage.getSelectedSessionId();
+	    const session = window.coachPage.getSelectedSession();
+	    if (!sessionId) return;
 
-        loadPlayersIntoSelect(sessionId);
-    };
+	    const msgBox = document.getElementById('uploadMsg');
+	    const totalDistance = Number($('#totalDistance').val());
+	    const duration = Number(session?.duration || 0);
+	    const playerName = $('#performancePlayer option:selected').text();
 
-    function savePerformance() {
-        const sessionId = window.coachPage.getSelectedSessionId();
-        const session = window.coachPage.getSelectedSession();
-        if (!sessionId) return;
+	    const payload = {
+	        playerId: Number($('#performancePlayer').val()),
+	        totalDistance,
+	        highIntensityDistance: Number($('#highIntensityDistance').val()),
+	        topSpeed: Number($('#topSpeed').val()),
+	        effortRating: Number($('#effortRating').val())
+	    };
 
-        const totalDistance = Number($('#totalDistance').val());
-        const duration = Number(session?.duration || 0);
+	    if (duration > 0) {
+	        payload.distancePerMin = Number((totalDistance / duration).toFixed(2));
+	    }
 
-        const payload = {
-            playerId: Number($('#performancePlayer').val()),
-            totalDistance,
-            highIntensityDistance: Number($('#highIntensityDistance').val()),
-            topSpeed: Number($('#topSpeed').val()),
-            effortRating: Number($('#effortRating').val())
-        };
+	    $.ajax({
+	        type: 'POST',
+	        url: `${SESSION_URL}/${sessionId}/performance`,
+	        contentType: 'application/json',
+	        headers: authHeaders(),
+	        data: JSON.stringify(payload),
+	        success: function () {
+	            $('#performanceModal').modal('hide');
+	            showMsg(msgBox, `${playerName} performance uploaded successfully`, 'success');
 
-        if (duration > 0) {
-            payload.distancePerMin = Number((totalDistance / duration).toFixed(2));
-        }
+	            if (performanceTable) {
+	                performanceTable.ajax.reload();
+	            }
+	        },
+	        error: function (xhr) {
+	            if (xhr.status === 401 || xhr.status === 403) {
+	                handleUnauthorized();
+	                return;
+	            }
 
-        $.ajax({
-            type: 'POST',
-            url: `${SESSION_URL}/${sessionId}/performance`,
-            contentType: 'application/json',
-            headers: authHeaders(),
-            data: JSON.stringify(payload),
-            success: function () {
-                $('#performanceModal').modal('hide');
-                if (performanceTable) performanceTable.ajax.reload();
-            },
-            error: function (xhr) {
-                if (xhr.status === 401 || xhr.status === 403) {
-                    handleUnauthorized();
-                    return;
-                }
-                const message = window.extractCoachError(xhr, 'Failed to upload player data');
-                showMsg(document.getElementById('createPerformanceError'), message, 'danger');
-            }
-        });
-    }
+	            const message = window.extractCoachError(xhr, 'Failed to upload player data');
+	            showMsg(document.getElementById('createPerformanceError'), message, 'danger');
+	        }
+	    });
+	}
 
-    const loadPlayersIntoSelect = (sessionId) => {
-        $.ajax({
-            type: 'GET',
-            url: `${SESSION_URL}/${sessionId}/available`,
-            headers: authHeaders(),
-            success: function (players) {
-                if (!players || players.length === 0) {
-                    showMsg(
-                        document.getElementById('uploadErrorMsg'),
-                        'All players already have performance data for this session.',
-                        'warning'
-                    );
-                    return;
-                }
+	const loadPlayersIntoSelect = (sessionId) => {
+	    const msgBox = document.getElementById('uploadMsg');
 
-                const $select = $('#performancePlayer');
-                $select.empty();
-                $select.append('<option value="">Select player</option>');
+	    $.ajax({
+	        type: 'GET',
+	        url: `${SESSION_URL}/${sessionId}/available`,
+	        headers: authHeaders(),
+	        success: function (players) {
+	            if (!players || players.length === 0) {
+	                showMsg(
+	                    msgBox,
+	                    'All players already have performance data for this session.',
+	                    'warning'
+	                );
+	                return;
+	            }
 
-                players.forEach(player => {
-                    const fullName = `${player.firstName} ${player.lastName}`;
-                    $select.append(`<option value="${player.id}">${fullName}</option>`);
-                });
+	            const $select = $('#performancePlayer');
+	            $select.empty();
+	            $select.append('<option value="">Select player</option>');
 
-                $('#performanceModal').modal('show');
-            },
-            error: function (xhr) {
-                if (xhr.status === 401 || xhr.status === 403) {
-                    handleUnauthorized();
-                }
-            }
-        });
-    };
+	            players.forEach(player => {
+	                const fullName = `${player.firstName} ${player.lastName}`;
+	                $select.append(`<option value="${player.id}">${fullName}</option>`);
+	            });
+
+	            $('#performanceModal').modal('show');
+	        },
+	        error: function (xhr) {
+	            if (xhr.status === 401 || xhr.status === 403) {
+	                handleUnauthorized();
+	            }
+	        }
+	    });
+	};
 
     window.extractCoachError = (xhr, fallbackMessage) => {
         if (xhr.responseJSON?.error) return xhr.responseJSON.error;

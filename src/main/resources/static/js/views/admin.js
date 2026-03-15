@@ -19,6 +19,10 @@
 
         $container.html(`
             <div class="mt-3">
+				<div id="createUserSuccess" class="alert d-none d-flex align-items-center gap-2">
+                    <i class="bi fs-5 flex-shrink-0"></i>
+                    <div class="msg-text"></div>
+                </div>
                 <table id="userTable" class="table table-striped">
                     <thead>
                         <tr>
@@ -144,6 +148,7 @@
             data: JSON.stringify(user),
             success: function () {
                 $('#userModal').modal('hide');
+				showMsg(document.getElementById('createUserSuccess'), `User: [${user.username}] created successfully`, 'success');
                 if (userTable) {
                     userTable.ajax.reload();
                 }
