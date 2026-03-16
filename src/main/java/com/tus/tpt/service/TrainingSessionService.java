@@ -136,6 +136,16 @@ public class TrainingSessionService {
         }
     }
 
+    public void deleteTrainingSession(Long sessionId) {
+
+        TrainingSession session = trainingSessionRepo.findById(sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Session data not found"));
+
+        playerPerformanceRepo.deleteBySessionId(sessionId);
+
+        trainingSessionRepo.delete(session);
+    }
+    
     private TrainingSessionResponse toResponse(TrainingSession session) {
         Set<PlayerDto> players = (session.getPerformances() == null ? java.util.Set.<PlayerPerformance>of() : session.getPerformances())
                 .stream()

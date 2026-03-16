@@ -50,6 +50,41 @@ public class UploadPerformanceService {
             throw new IllegalArgumentException("Data already exists for this player in this session");
         }
     }
+    
+    public PlayerPerformanceResponse updatePlayerData(Long sessionId, UploadPlayerPerformance request) {
+
+        PlayerPerformance performance = performanceRepository
+                .findByPlayerIdAndSessionId(request.getPlayerId(), sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Performance data not found"));
+
+        TrainingSession session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Training session not found"));
+
+        if (request.getHighIntensityDistance() > request.getTotalDistance()) {
+            throw new IllegalArgumentException("High intensity distance cannot exceed total distance");
+        }
+
+        double distancePerMin = request.getTotalDistance() / session.getDuration();
+
+        performance.setTotalDistance(request.getTotalDistance());
+        performance.setHighIntensityDistance(request.getHighIntensityDistance());
+        performance.setTopSpeed(request.getTopSpeed());
+        performance.setEffortRating(request.getEffortRating());
+        performance.setDistancePerMin(distancePerMin);
+
+        performanceRepository.save(performance);
+
+        return toResponse(performance);
+    }
+    
+    public void deletePlayerPerformance(Long sessionId, Long playerId) {
+
+        PlayerPerformance performance = performanceRepository
+                .findByPlayerIdAndSessionId(playerId, sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Performance data not found"));
+
+        performanceRepository.delete(performance);
+    }
 
     private static PlayerPerformance getPlayerPerformance(UploadPlayerPerformance request, TrainingSession session, User player) {
         if (request.getHighIntensityDistance() > request.getTotalDistance()) {
