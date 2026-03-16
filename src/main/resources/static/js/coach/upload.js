@@ -4,57 +4,72 @@
     const SESSION_URL = '/api/sessions';
     let performanceTable = null;
 
-    function renderUploadSection() {
-        const session = window.coachPage.getSelectedSession();
+	const renderUploadSection = () => {
+	    const session = window.coachPage.getSelectedSession();
 
-        $('#sessionDetailsSection').html(`
-            <div id="uploadMsg" class="alert d-none d-flex align-items-center gap-2">
-                <i class="bi fs-5 flex-shrink-0"></i>
-                <div class="msg-text"></div>
-            </div>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h4 class="card-title mb-3">Session ${session?.id ?? ''}</h4>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <strong>Datetime:</strong>
-                            <div>${session?.datetime ?? ''}</div>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>Type:</strong>
-                            <div>${session?.type ?? ''}</div>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>Duration:</strong>
-                            <div>${session?.duration ?? 0} min</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+	    $('#sessionDetailsSection').html(`
+	        <div class="content-panel">
+	            <div class="content-panel-header">
+	                <div>
+	                    <h2 class="content-panel-title mb-1">Session Performance</h2>
+	                    <p class="content-panel-subtitle mb-0">
+	                        Manage player performance data for the selected session
+	                    </p>
+	                </div>
+	            </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <button class="btn btn-outline-secondary" id="backToSessionsBtn">
-                    <i class="fa-solid fa-arrow-left me-2"></i>Back to Sessions
-                </button>
-                <button class="btn btn-success" id="addPerformanceBtn">Add Player Data</button>
-            </div>
+	            <div id="uploadMsg" class="alert d-none d-flex align-items-center gap-2">
+	                <i class="bi fs-5 flex-shrink-0"></i>
+	                <div class="msg-text"></div>
+	            </div>
 
-            <h5 class="mb-3">Current Player Performance</h5>
-            <table id="performanceTable" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Player</th>
-                        <th>Total Distance</th>
-                        <th>Distance/Min</th>
-                        <th>High Intensity Distance</th>
-                        <th>Top Speed</th>
-                        <th>Effort Rating</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        `);
-    }
+	            <div class="card mb-4">
+	                <div class="card-body">
+	                    <h4 class="card-title mb-3">Session ${session?.id ?? ''}</h4>
+	                    <div class="row">
+	                        <div class="col-md-4">
+	                            <strong>Datetime:</strong>
+	                            <div>${session?.datetime ?? ''}</div>
+	                        </div>
+	                        <div class="col-md-4">
+	                            <strong>Type:</strong>
+	                            <div>${session?.type ?? ''}</div>
+	                        </div>
+	                        <div class="col-md-4">
+	                            <strong>Duration:</strong>
+	                            <div>${session?.duration ?? 0} min</div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+
+	            <div class="d-flex justify-content-between align-items-center mb-3">
+	                <button class="btn btn-outline-secondary" id="backToSessionsBtn">
+	                    <i class="fa-solid fa-arrow-left me-2"></i>Back to Sessions
+	                </button>
+	                <button class="btn btn-primary" id="addPerformanceBtn">
+	                    <i class="fa-solid fa-plus me-2"></i>Add Player Data
+	                </button>
+	            </div>
+
+	            <div class="table-shell">
+	                <table id="performanceTable" class="table table-striped align-middle mb-0">
+	                    <thead>
+	                        <tr>
+	                            <th>Player</th>
+	                            <th>Total Distance</th>
+	                            <th>Distance/Min</th>
+	                            <th>High Intensity Distance</th>
+	                            <th>Top Speed</th>
+	                            <th>Effort Rating</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody></tbody>
+	                </table>
+	            </div>
+	        </div>
+	    `);
+	};
 
     function loadPerformanceTable() {
         const sessionId = window.coachPage.getSelectedSessionId();

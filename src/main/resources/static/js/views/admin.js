@@ -18,28 +18,39 @@
 
         if (!$container.length) return;
 
-        $container.html(`
-            <div class="mt-3">
-                <div id="createUserSuccess" class="alert d-none d-flex align-items-center gap-2">
-                    <i class="bi fs-5 flex-shrink-0"></i>
-                    <div class="msg-text"></div>
-                </div>
+		$container.html(`
+		        <div class="content-panel">
+		            <div class="content-panel-header">
+		                <div>
+		                    <h2 class="content-panel-title mb-1">Admin Dashboard</h2>
+		                    <p class="content-panel-subtitle mb-0">
+		                        Manage system users and roles from one central dashboard
+		                    </p>
+		                </div>
+		            </div>
 
-                <table id="userTable" class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>First name</th>
-                            <th>Last name</th>
-                            <th>Role</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+		            <div id="createUserSuccess" class="alert d-none d-flex align-items-center gap-2">
+		                <i class="bi fs-5 flex-shrink-0"></i>
+		                <div class="msg-text"></div>
+		            </div>
 
-            <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+		            <div class="table-shell">
+		                <table id="userTable" class="table table-striped align-middle mb-0">
+		                    <thead>
+		                        <tr>
+		                            <th>Username</th>
+		                            <th>First name</th>
+		                            <th>Last name</th>
+		                            <th>Role</th>
+		                        </tr>
+		                    </thead>
+		                    <tbody></tbody>
+		                </table>
+		            </div>
+		        </div>
+
+		        <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+		            <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="userModalLabel">Create New User</h5>

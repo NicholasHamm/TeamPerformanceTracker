@@ -4,30 +4,40 @@
     const SESSION_URL = '/api/sessions';
     let sessionsTable = null;
 
-    function renderSessionsSection() {
+	const renderSessionsSection = () => {
+	    $('#sessionsListSection').html(`
+	        <div class="content-panel">
+	            <div class="content-panel-header">
+	                <div>
+	                    <h2 class="content-panel-title mb-1">Training Sessions</h2>
+	                    <p class="content-panel-subtitle mb-0">
+	                        View, manage, and upload player performance data for each session
+	                    </p>
+	                </div>
+	            </div>
 
-        $('#sessionsListSection').html(`
-            <h2 class="mb-3">Training Sessions</h2>
+	            <div id="createSessionSuccess" class="alert d-none d-flex align-items-center gap-2 mt-3">
+	                <i class="bi fs-5 flex-shrink-0"></i>
+	                <div class="msg-text"></div>
+	            </div>
 
-            <div id="createSessionSuccess" class="alert d-none d-flex align-items-center gap-2">
-                <i class="bi fs-5 flex-shrink-0"></i>
-                <div class="msg-text"></div>
-            </div>
-
-            <table id="sessionTable" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Datetime</th>
-                        <th>Type</th>
-                        <th>Duration</th>
-                        <th>Upload Data</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        `);
-    }
+	            <div class="table-shell">
+	                <table id="sessionTable" class="table table-striped align-middle mb-0">
+	                    <thead>
+	                        <tr>
+	                            <th>ID</th>
+	                            <th>Datetime</th>
+	                            <th>Type</th>
+	                            <th>Duration</th>
+	                            <th>Upload Data</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody></tbody>
+	                </table>
+	            </div>
+	        </div>
+	    `);
+	};
 
     function loadSessionsTable() {
 

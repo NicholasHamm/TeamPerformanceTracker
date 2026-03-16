@@ -13,32 +13,40 @@
     let playerSessionsTable = null;
     let currentPage = 'sessions';
 
-    const renderPlayerView = () => {
-        const $container = $('#pageContent');
+	const renderPlayerView = () => {
+	    const $container = $('#pageContent');
+	    if (!$container.length) return;
 
-        if (!$container.length) return;
+	    $container.html(`
+	        <div class="content-panel">
+	            <div class="content-panel-header">
+	                <div>
+	                    <h2 class="content-panel-title mb-1">My Sessions</h2>
+	                    <p class="content-panel-subtitle mb-0">
+	                        Review your recorded training performance across all sessions
+	                    </p>
+	                </div>
+	            </div>
 
-        $container.html(`
-            <div class="mt-3">
-                <h2 class="mb-3">My Sessions</h2>
-
-                <table id="playerSessionTable" class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Datetime</th>
-                            <th>Type</th>
-                            <th>Duration</th>
-                            <th>Total Distance</th>
-                            <th>High Intensity Distance</th>
-                            <th>Top Speed</th>
-                            <th>Effort Rating</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        `);
-    };
+	            <div class="table-shell">
+	                <table id="playerSessionTable" class="table table-striped align-middle mb-0">
+	                    <thead>
+	                        <tr>
+	                            <th>Datetime</th>
+	                            <th>Type</th>
+	                            <th>Duration</th>
+	                            <th>Total Distance</th>
+	                            <th>High Intensity Distance</th>
+	                            <th>Top Speed</th>
+	                            <th>Effort Rating</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody></tbody>
+	                </table>
+	            </div>
+	        </div>
+	    `);
+	};
 
     const initPlayerNavbar = () => {
         const navItems = playerNavbar.items.map(item => ({
