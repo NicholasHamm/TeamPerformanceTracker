@@ -11,18 +11,20 @@
     };
 
     let userTable = null;
+    let currentPage = 'dashboard';
 
-    const renderAdmin = () => {
+    const renderAdminView = () => {
         const $container = $('#pageContent');
 
         if (!$container.length) return;
 
         $container.html(`
             <div class="mt-3">
-				<div id="createUserSuccess" class="alert d-none d-flex align-items-center gap-2">
+                <div id="createUserSuccess" class="alert d-none d-flex align-items-center gap-2">
                     <i class="bi fs-5 flex-shrink-0"></i>
                     <div class="msg-text"></div>
                 </div>
+
                 <table id="userTable" class="table table-striped">
                     <thead>
                         <tr>
@@ -148,7 +150,7 @@
             data: JSON.stringify(user),
             success: function () {
                 $('#userModal').modal('hide');
-				showMsg(document.getElementById('createUserSuccess'), `User: [${user.username}] created successfully`, 'success');
+                showMsg(document.getElementById('createUserSuccess'), `User: [${user.username}] created successfully`, 'success');
                 if (userTable) {
                     userTable.ajax.reload();
                 }
@@ -159,24 +161,34 @@
                     return;
                 }
 
-				const message = extractErrorMessage(xhr, 'Failed to save user');
-				const msgBox = document.getElementById('createUserError');
-				showMsg(msgBox, message, 'danger');
+                const message = extractErrorMessage(xhr, 'Failed to save user');
+                const msgBox = document.getElementById('createUserError');
+                showMsg(msgBox, message, 'danger');
             }
         });
     };
 
     const initAdminNavbar = () => {
+        const navItems = adminNavbar.items.map(item => ({
+            ...item,
+            active: item.id === currentPage
+        }));
+
         window.renderNavbar({
-            items: adminNavbar.items,
+            items: navItems,
             onNavigate: (page) => {
                 switch (page) {
                     case 'dashboard':
-                        renderAdmin();
+                        currentPage = 'dashboard';
+                        renderAdminView();
                         loadAdminData();
+                        initAdminNavbar();
                         break;
 
                     case 'create-user':
+                        // keep dashboard highlighted because this is a modal action
+                        currentPage = 'dashboard';
+                        initAdminNavbar();
                         openCreateUserModal();
                         break;
                 }
@@ -189,7 +201,8 @@
     };
 
     window.renderAdmin = () => {
-        renderAdmin();
+        currentPage = 'dashboard';
+        renderAdminView();
         loadAdminData();
         initAdminNavbar();
     };
