@@ -11,6 +11,7 @@
     };
 
     let playerSessionsTable = null;
+    let currentPage = 'sessions';
 
     const renderPlayerView = () => {
         const $container = $('#pageContent');
@@ -40,10 +41,17 @@
     };
 
     const initPlayerNavbar = () => {
+        const navItems = playerNavbar.items.map(item => ({
+            ...item,
+            active: item.id === currentPage
+        }));
+
         window.renderNavbar({
-            items: playerNavbar.items,
+            items: navItems,
 
             onNavigate: (page) => {
+                currentPage = page;
+
                 switch (page) {
                     case 'sessions':
                         renderPlayerView();
@@ -83,12 +91,12 @@
                 }
             },
             columns: [
-				{
-				    data: 'datetime',
-				    render: function (data) {
-				        return formatDateGMT(data);
-				    }
-				},
+                {
+                    data: 'datetime',
+                    render: function (data) {
+                        return formatDateGMT(data);
+                    }
+                },
                 { data: 'type' },
                 { data: 'duration' },
                 { data: 'totalDistance' },
@@ -100,6 +108,7 @@
     };
 
     window.renderPlayer = () => {
+        currentPage = 'sessions';
         renderPlayerView();
         loadPlayerSessions();
         initPlayerNavbar();

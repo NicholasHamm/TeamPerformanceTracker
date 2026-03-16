@@ -212,7 +212,7 @@
         savePerformance();
     });
 
-    $(document).on('click', '#backToSessionsBtn', function () {
-        window.coachPage.showSessionsList();
-    });
+	$(document).on('click', '#backToSessionsBtn', function () {
+	    window.coachPage.goTo('sessions');
+	});
 })();
