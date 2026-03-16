@@ -104,7 +104,7 @@ class UploadPerformanceServiceTest {
                 () -> service.uploadPlayerData(1L, request)
         );
 
-        assertEquals("Player not found", ex.getMessage());
+        assertEquals("Please select an existing player", ex.getMessage());
         verify(userRepository).findById(3L);
         verify(sessionRepository, never()).findById(anyLong());
         verify(performanceRepository, never()).save(any());

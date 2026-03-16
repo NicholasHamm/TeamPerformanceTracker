@@ -54,7 +54,7 @@ pipeline {
                 expression { return params.RUN_UI_TESTS }
             }
             steps {
-                bat 'mvn -B -Dtest=SeleniumRunnerTest test'
+                bat 'mvn -B -Dtest=SeleniumRunner test'
             }
             post {
                 always {
