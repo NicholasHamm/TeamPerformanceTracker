@@ -37,32 +37,32 @@ pipeline {
             }
         }
 
-        stage('API Integration Tests (Karate)') {
-            steps {
-                bat 'mvn -B -Papi-tests verify'
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: 'target/failsafe-reports/*.xml'
-                    archiveArtifacts artifacts: 'target/karate-reports/**', allowEmptyArchive: true
-                }
-            }
-        }
+        stage('API Tests (Karate)') {
+		    steps {
+		        bat 'mvn -B -Papi-tests verify'
+		    }
+		    post {
+		        always {
+		            junit allowEmptyResults: true, testResults: 'target/failsafe-reports-api/*.xml'
+		            archiveArtifacts artifacts: 'target/karate-reports/**', allowEmptyArchive: true
+		        }
+		    }
+		}
 
-        stage('UI Integration Tests (Selenium)') {
-            when {
-                expression { return params.RUN_UI_TESTS }
-            }
-            steps {
-                bat 'mvn -B -Pui-tests verify'
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: 'target/failsafe-reports/*.xml'
-                    archiveArtifacts artifacts: 'target/screenshots/**', allowEmptyArchive: true
-                }
-            }
-        }
+        stage('UI Tests (Selenium)') {
+		    when {
+		        expression { return params.RUN_UI_TESTS }
+		    }
+		    steps {
+		        bat 'mvn -B -Pui-tests verify'
+		    }
+		    post {
+		        always {
+		            junit allowEmptyResults: true, testResults: 'target/failsafe-reports-ui/*.xml'
+		            archiveArtifacts artifacts: 'target/screenshots/**', allowEmptyArchive: true
+		        }
+		    }
+		}
     }
 
     post {
