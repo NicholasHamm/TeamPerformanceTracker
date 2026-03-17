@@ -13,12 +13,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LoginSteps {
+public class LoginLogoutSteps {
 
     private final DriverFactory df;
     private final UserRepository userRepository;
 
-    public LoginSteps(DriverFactory df, UserRepository userRepository) {
+    public LoginLogoutSteps(DriverFactory df, UserRepository userRepository) {
         this.df = df;
         this.userRepository = userRepository;
     }
@@ -27,6 +27,12 @@ public class LoginSteps {
     public void adminUserExists() {
         Optional<User> admin = userRepository.findByUsernameIgnoreCase("admin");
         assertTrue(admin.isPresent(), "Expected admin user to exist in H2 test database");
+    }
+    
+    @Given("a coach user exists in the system")
+    public void coachUserExists() {
+        Optional<User> coach = userRepository.findByUsernameIgnoreCase("coach1");
+        assertTrue(coach.isPresent(), "Expected coach user to exist in H2 test database");
     }
 
     @Given("the user opens the login page")
@@ -55,6 +61,27 @@ public class LoginSteps {
     public void dashboardVisible() {
         df.waitFor().until(ExpectedConditions.visibilityOfElementLocated(By.id("logoutBtn")));
         assertTrue(df.driver().findElement(By.id("logoutBtn")).isDisplayed());
+    }
+    
+    @Given("the admin user is logged in")
+    public void adminUserIsLoggedIn() {
+        adminUserExists();
+        openLoginPage();
+        enterUsername("admin");
+        enterPassword("admin");
+        submitLogin();
+        dashboardVisible();
+    }
+
+    @When("the user clicks the logout button")
+    public void clickLogout() {
+        df.driver().findElement(By.id("logoutBtn")).click();
+    }
+
+    @Then("the login page should be visible")
+    public void loginPageVisible() {
+        df.waitFor().until(ExpectedConditions.visibilityOfElementLocated(By.id("loginButton")));
+        assertTrue(df.driver().findElement(By.id("loginButton")).isDisplayed());
     }
 
     @After
