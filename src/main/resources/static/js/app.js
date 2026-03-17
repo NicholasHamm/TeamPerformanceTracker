@@ -34,33 +34,34 @@
     const renderPageForRole = (role) => {
         const pageContent = document.getElementById('pageContent');
         const pageTitle = document.getElementById('pageTitle');
+		const navTitle = document.getElementById('navbarWelcome');
 
         if (!pageContent) return;
 
         switch (role) {
             case 'ADMIN':
-                pageTitle.textContent = 'Admin Dashboard';
                 if (window.renderAdmin) {
+					navTitle.textContent = "Admin Dashboard";
                     window.renderAdmin(pageContent);
                 }
                 break;
 
             case 'COACH':
-                pageTitle.textContent = 'Coach Dashboard';
                 if (window.renderCoach) {
+					navTitle.textContent = "Coach Dashboard";
                     window.renderCoach(pageContent);
                 }
                 break;
 
             case 'PLAYER':
-                pageTitle.textContent = 'Player Dashboard';
                 if (window.renderPlayer) {
-                    window.renderPlayer(pageContent);
+					navTitle.textContent = "Player Dashboard";
+					window.renderPlayer(pageContent);
                 }
                 break;
 
             default:
-                pageTitle.textContent = 'Dashboard';
+                pageTitle.textContent = 'Unauthorized';
                 pageContent.innerHTML = '<p>Unauthorized role</p>';
         }
     };

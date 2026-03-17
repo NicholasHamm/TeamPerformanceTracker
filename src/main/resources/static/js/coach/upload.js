@@ -6,6 +6,8 @@
     let performanceTable = null;
     let performanceMode = 'create';
     let editingPlayerId = null;
+	let deletePlayerId = null;
+	let deletePlayerName = null;
 
     const renderUploadSection = () => {
         const session = window.coachPage.getSelectedSession();
@@ -58,6 +60,30 @@
                 </thead>
                 <tbody></tbody>
             </table>
+			
+			<div class="modal fade" id="deletePerformanceModal" tabindex="-1" aria-hidden="true">
+			    <div class="modal-dialog modal-dialog-centered">
+			        <div class="modal-content border-0 shadow">
+			            <div class="modal-header">
+			                <h5 class="modal-title">Delete Player Data</h5>
+			                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			            </div>
+			            <div class="modal-body">
+			                <p class="mb-0" id="deletePerformanceMessage">
+			                    Are you sure you want to delete this performance data?
+			                </p>
+			            </div>
+			            <div class="modal-footer">
+			                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+			                    Cancel
+			                </button>
+			                <button type="button" class="btn btn-danger" id="confirmDeletePerformanceBtn">
+			                    Delete
+			                </button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
         `);
     };
 
@@ -267,34 +293,53 @@
         else createPerformance();
     };
 
-    const deletePerformance = (playerId, playerName) => {
-        const sessionId = window.coachPage.getSelectedSessionId();
-        if (!sessionId || !playerId) return;
+	const openDeletePerformanceModal = (playerId, playerName) => {
+	    deletePlayerId = playerId;
+	    deletePlayerName = playerName;
 
-        const msgBox = document.getElementById('uploadMsg');
+	    $('#deletePerformanceMessage').text(
+	        `Delete performance data for ${playerName}?`
+	    );
 
-        if (!confirm(`Delete performance data for ${playerName}?`)) return;
+	    $('#deletePerformanceModal').modal('show');
+	};
 
-        $.ajax({
-            type: 'DELETE',
-            url: `${SESSION_URL}/${sessionId}/player/${playerId}`,
-            headers: authHeaders(),
-            success: () => {
-                showMsg(msgBox, 'Performance data deleted successfully', 'success');
+	const confirmDeletePerformance = () => {
+	    const sessionId = window.coachPage.getSelectedSessionId();
+	    if (!sessionId || !deletePlayerId) return;
 
-                if (performanceTable) performanceTable.ajax.reload();
-            },
-            error: (xhr) => {
-                if (xhr.status === 401 || xhr.status === 403) {
-                    handleUnauthorized();
-                    return;
-                }
+	    const msgBox = document.getElementById('uploadMsg');
 
-                const message = window.extractCoachError(xhr, 'Failed to delete player data');
-                showMsg(msgBox, message, 'danger');
-            }
-        });
-    };
+	    $.ajax({
+	        type: 'DELETE',
+	        url: `${SESSION_URL}/${sessionId}/player/${deletePlayerId}`,
+	        headers: authHeaders(),
+	        success: () => {
+	            $('#deletePerformanceModal').modal('hide');
+
+	            showMsg(msgBox, 'Performance data deleted successfully', 'success');
+
+	            if (performanceTable) performanceTable.ajax.reload();
+
+	            deletePlayerId = null;
+	            deletePlayerName = null;
+	        },
+	        error: (xhr) => {
+	            $('#deletePerformanceModal').modal('hide');
+
+	            if (xhr.status === 401 || xhr.status === 403) {
+	                handleUnauthorized();
+	                return;
+	            }
+
+	            const message = window.extractCoachError(xhr, 'Failed to delete player data');
+	            showMsg(msgBox, message, 'danger');
+
+	            deletePlayerId = null;
+	            deletePlayerName = null;
+	        }
+	    });
+	};
 
     const loadPlayersIntoSelect = (sessionId) => {
         const msgBox = document.getElementById('uploadMsg');
@@ -352,12 +397,16 @@
         const row = performanceTable.row($(this).closest('tr')).data();
         openEditPerformanceModal(row);
     });
+	
+	$(document).on('click', '#confirmDeletePerformanceBtn', () => {
+	    confirmDeletePerformance();
+	});
 
-    $(document).on('click', '.delete-performance-btn', function () {
-        const playerId = Number($(this).data('player-id'));
-        const playerName = $(this).data('player-name');
-        deletePerformance(playerId, playerName);
-    });
+	$(document).on('click', '.delete-performance-btn', function () {
+	    const playerId = Number($(this).data('player-id'));
+	    const playerName = $(this).data('player-name');
+	    openDeletePerformanceModal(playerId, playerName);
+	});
 
     $(document).on('click', '#backToSessionsBtn', () => {
         window.coachPage.goTo('sessions');
