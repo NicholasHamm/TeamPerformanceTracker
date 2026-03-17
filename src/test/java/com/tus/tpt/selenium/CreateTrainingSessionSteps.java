@@ -37,9 +37,7 @@ public class CreateTrainingSessionSteps {
     
     @When("the coach navigates to the create session form")
     public void navigateToCreateSessionForm() {
-    	//df.driver().findElement(By.cssSelector("[data-page='create-session']")).click();
-
-        var trendsLink = df.waitFor().until(
+    	var trendsLink = df.waitFor().until(
             ExpectedConditions.presenceOfElementLocated(By.cssSelector("#navItems [data-page='create-session']"))
         );
 

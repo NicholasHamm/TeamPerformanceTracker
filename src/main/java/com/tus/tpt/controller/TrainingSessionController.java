@@ -78,7 +78,7 @@ public class TrainingSessionController {
     }
     
     @PutMapping("/{sessionId}/performance")
-    public ResponseEntity<?> updatePerformance(
+    public ResponseEntity<String> updatePerformance(
             @PathVariable Long sessionId,
             @Valid @RequestBody UploadPlayerPerformance request) {
 
@@ -88,7 +88,7 @@ public class TrainingSessionController {
     }
     
     @DeleteMapping("/{sessionId}/player/{playerId}")
-    public ResponseEntity<?> deletePerformance(
+    public ResponseEntity<String> deletePerformance(
             @PathVariable Long sessionId,
             @PathVariable Long playerId) {
 
@@ -98,7 +98,7 @@ public class TrainingSessionController {
     }
     
     @DeleteMapping("/{sessionId}")
-    public ResponseEntity<?> deleteSession(@PathVariable Long sessionId) {
+    public ResponseEntity<String> deleteSession(@PathVariable Long sessionId) {
 
         trainingSessionService.deleteTrainingSession(sessionId);
 
