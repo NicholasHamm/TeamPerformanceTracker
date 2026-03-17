@@ -34,28 +34,41 @@
 		const $container = $('#sessionAveragesSection');
         if (!$container.length) return;
 
-        $container.html(`
-            <div class="mt-3">
-                <h2 class="mb-3">Session Averages</h2>
+		$container.html(`
+		    <div class="content-panel">
+		        <div class="content-panel-header">
+		            <div>
+		                <h2 class="content-panel-title mb-1">Session Averages</h2>
+		                <p class="content-panel-subtitle mb-0">
+		                    Analyse average session metrics and drill into player breakdowns
+		                </p>
+		            </div>
+		        </div>
 
-                <div id="coachAveragesMsg" class="alert d-none d-flex align-items-center gap-2">
-                    <i class="bi fs-5 flex-shrink-0"></i>
-                    <div class="msg-text"></div>
-                </div>
+		        <div id="coachAveragesMsg" class="alert d-none d-flex align-items-center gap-2">
+		            <i class="bi fs-5 flex-shrink-0"></i>
+		            <div class="msg-text"></div>
+		        </div>
 
-                <div class="row g-3 align-items-end mb-4">
-                    <div class="col-md-8">
-                        <label for="averageSessionSelect" class="form-label">Select Session</label>
-                        <select id="averageSessionSelect" class="form-control">
-                            <option value="">Select session</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-primary w-100" id="loadSessionAveragesBtn">Search</button>
-                    </div>
-                </div>
+		        <div class="card mb-4">
+		            <div class="card-body">
+		                <div class="row g-3 align-items-end">
+		                    <div class="col-md-8">
+		                        <label for="averageSessionSelect" class="form-label">Select Session</label>
+		                        <select id="averageSessionSelect" class="form-select">
+		                            <option value="">Select session</option>
+		                        </select>
+		                    </div>
+		                    <div class="col-md-4">
+		                        <button class="btn btn-primary w-100" id="loadSessionAveragesBtn">
+		                            <i class="fa-solid fa-magnifying-glass me-2"></i>Load Averages
+		                        </button>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
 
-                <div id="sessionAverageCards" class="row g-3 d-none">
+				<div id="sessionAverageCards" class="row g-3 d-none">
                     <div class="col-md-4">
                         <div class="card metric-card h-100" data-metric="totalDistance">
                             <div class="card-body text-center">
@@ -118,7 +131,7 @@
                     </div>
                 </div>
             </div>
-        `);
+		`);
 
         loadSessionsIntoDropdown();
     };

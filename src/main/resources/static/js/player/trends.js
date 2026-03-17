@@ -13,11 +13,17 @@
 
         if (!$container.length) return;
 
-        $container.html(`
-            <div class="mt-3">
-                <h2 class="mb-3">Performance Trends</h2>
-
-                <div id="trendError" class="alert d-none d-flex align-items-center gap-2">
+		$container.html(`
+		    <div class="content-panel">
+		        <div class="content-panel-header">
+		            <div>
+		                <h2 class="content-panel-title mb-1">Performance Trends</h2>
+		                <p class="content-panel-subtitle mb-0">
+		                    Explore how your training metrics change over time
+		                </p>
+		            </div>
+		        </div>
+				<div id="trendError" class="alert d-none d-flex align-items-center gap-2">
                     <i class="bi fs-5 flex-shrink-0"></i>
                     <div class="msg-text"></div>
                 </div>
@@ -92,6 +98,7 @@
 				    </div>
 				</div>
             </div>
+		</div>
         `);
 		
 		$('#trendStartDate').val(getTodayDate());
