@@ -52,6 +52,22 @@ Feature: Training Session upload performance data API
       error: "Data already exists for this player in this session"
     }
     """
+    
+  Scenario: Update player performance
+    Given path 'api/sessions', 1, 'performance'
+    And request
+    """
+    {
+      "playerId": 3,
+      "totalDistance": 4000.0,
+      "highIntensityDistance": 700.0,
+      "topSpeed": 13.2,
+      "effortRating": 7
+    }
+    """
+    When method put
+    Then status 200
+    And match response == '#string'
 
   Scenario: Upload player performance with invalid payload
     Given path 'api/sessions', 1, 'performance'

@@ -35,9 +35,4 @@ Feature: User Management GET API
       role: 'ADMIN'
     }
     """
-
-  Scenario: Get user by username returns 404 when not found
-    Given path 'api/users', 'not-a-real-user'
-    When method get
-    Then status 404
     

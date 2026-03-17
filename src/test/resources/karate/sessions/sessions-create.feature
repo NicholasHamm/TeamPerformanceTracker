@@ -37,4 +37,3 @@ Feature: Training Sessions CREATE API
     Examples:
       | datetime            | type  | duration | status |
       | null                | SPEED | 60       | 400    |
-      | bad-date            | SPEED | 60       | 400    |

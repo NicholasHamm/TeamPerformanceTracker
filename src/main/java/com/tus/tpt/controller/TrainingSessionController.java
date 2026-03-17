@@ -102,7 +102,7 @@ public class TrainingSessionController {
 
         trainingSessionService.deleteTrainingSession(sessionId);
 
-        return ResponseEntity.ok("Session data deleted successfully");
+        return ResponseEntity.ok("Training session deleted");
     }
     
 }

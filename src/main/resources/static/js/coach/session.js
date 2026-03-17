@@ -3,6 +3,7 @@
 
     const SESSION_URL = '/api/sessions';
     let sessionsTable = null;
+	let selectedSessionIdToDelete = null;
 	let isCreatingSession = false;
 
     function renderSessionsSection() {
@@ -27,6 +28,35 @@
                 </thead>
                 <tbody></tbody>
             </table>
+			
+			<div class="modal fade" id="deleteSessionModal" tabindex="-1" aria-hidden="true">
+			    <div class="modal-dialog modal-dialog-centered">
+			        <div class="modal-content border-0 shadow">
+
+			            <div class="modal-header">
+			                <h5 class="modal-title">Delete Training Session</h5>
+			                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			            </div>
+
+			            <div class="modal-body">
+			                <p class="mb-0" id="deleteSessionMessage">
+			                    Are you sure you want to delete this session? 
+			                    <br><strong>All associated player data will also be permanently removed.</strong>
+			                </p>
+			            </div>
+
+			            <div class="modal-footer">
+			                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+			                    Cancel
+			                </button>
+			                <button type="button" class="btn btn-danger" id="confirmDeleteSessionBtn">
+			                    Delete
+			                </button>
+			            </div>
+
+			        </div>
+			    </div>
+			</div>
         `);
     }
 
@@ -164,25 +194,31 @@
 	    });
 	}
 	
-	$(document).off('click', '.delete-session-btn').on('click', '.delete-session-btn', function () {
-	    const sessionId = Number($(this).data('session-id'));
+	$(document).off('click', '#confirmDeleteSessionBtn').on('click', '#confirmDeleteSessionBtn', function () {
 
-	    if (!confirm('Are you sure you want to delete this session and its associated player data?')) {
-	        return;
-	    }
+	    if (!selectedSessionIdToDelete) return;
 
 	    $.ajax({
 	        type: 'DELETE',
-	        url: `${SESSION_URL}/${sessionId}`,
+	        url: `${SESSION_URL}/${selectedSessionIdToDelete}`,
 	        headers: authHeaders(),
-	        success: function () {
+
+	        success: () => {
+	            const modalEl = document.getElementById('deleteSessionModal');
+	            bootstrap.Modal.getInstance(modalEl).hide();
+
 	            renderSessionsSection();
 	            loadSessionsTable();
 
 	            const msgBox = document.getElementById('createSessionSuccess');
-	            showMsg(msgBox, 'Session data deleted successfully', 'warn');
+	            showMsg(msgBox, 'Training Session deleted', 'warn');
 	        },
-	        error: function (xhr) {
+
+	        error: (xhr) => {
+
+	            const modalEl = document.getElementById('deleteSessionModal');
+	            bootstrap.Modal.getInstance(modalEl).hide();
+
 	            if (xhr.status === 401 || xhr.status === 403) {
 	                handleUnauthorized();
 	                return;
@@ -198,6 +234,13 @@
 
 	$(document).off('click', '#saveSessionBtn').on('click', '#saveSessionBtn', function () {
 	    createSession();
+	});
+	
+	$(document).off('click', '.delete-session-btn').on('click', '.delete-session-btn', function () {
+	    selectedSessionIdToDelete = Number($(this).data('session-id'));
+
+	    const modal = new bootstrap.Modal(document.getElementById('deleteSessionModal'));
+	    modal.show();
 	});
 	
     $(document).on('click', '.manage-session-btn', function () {
