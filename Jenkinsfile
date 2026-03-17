@@ -100,14 +100,6 @@ pipeline {
                 keepAll: true,
                 alwaysLinkToLastBuild: true
             ])
-
-            publishHTML(target: [
-                reportDir: 'target/cucumber-reports',
-                reportFiles: 'selenium.html',
-                reportName: 'Selenium Cucumber Report',
-                keepAll: true,
-                alwaysLinkToLastBuild: true
-            ])
         }
     }
 }
