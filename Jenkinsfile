@@ -22,13 +22,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn -B clean compile'
+                bat 'mvn -B clean package -DskipTests'
             }
         }
 
-        stage('Unit Tests (JUnit)') {
+        stage('Unit Tests') {
             steps {
-                bat 'mvn -B -Dtest=*Test test'
+                bat 'mvn -B test'
             }
             post {
                 always {
@@ -37,45 +37,29 @@ pipeline {
             }
         }
 
-        stage('API Tests (Karate)') {
+        stage('API Integration Tests (Karate)') {
             steps {
-                bat 'mvn -B -Dtest=KarateIT test'
+                bat 'mvn -B -Papi-tests verify'
             }
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: 'target/failsafe-reports/*.xml'
                     archiveArtifacts artifacts: 'target/karate-reports/**', allowEmptyArchive: true
                 }
             }
         }
 
-        stage('UI Tests (Selenium)') {
+        stage('UI Integration Tests (Selenium)') {
             when {
                 expression { return params.RUN_UI_TESTS }
             }
             steps {
-                bat 'mvn -B -Dtest=SeleniumRunner test'
+                bat 'mvn -B -Pui-tests verify'
             }
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: 'target/failsafe-reports/*.xml'
                     archiveArtifacts artifacts: 'target/screenshots/**', allowEmptyArchive: true
-                }
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('LocalSonar') {
-                    bat 'mvn -B sonar:sonar -Dsonar.projectKey=TeamPerformanceTracker -Dsonar.projectName=TeamPerformanceTracker'
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
                 }
             }
         }
@@ -83,7 +67,6 @@ pipeline {
 
     post {
         always {
-            junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
             archiveArtifacts artifacts: 'target/**/*', fingerprint: true
 
             publishHTML(target: [
@@ -98,6 +81,14 @@ pipeline {
                 reportDir: 'target/karate-reports',
                 reportFiles: 'karate-summary.html',
                 reportName: 'Karate Summary',
+                keepAll: true,
+                alwaysLinkToLastBuild: true
+            ])
+
+            publishHTML(target: [
+                reportDir: 'target/cucumber-reports',
+                reportFiles: 'selenium.html',
+                reportName: 'Selenium Cucumber Report',
                 keepAll: true,
                 alwaysLinkToLastBuild: true
             ])

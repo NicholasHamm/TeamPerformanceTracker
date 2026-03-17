@@ -13,5 +13,5 @@ import org.junit.platform.suite.api.Suite;
 @ConfigurationParameter(key = FEATURES_PROPERTY_NAME, value = "classpath:selenium")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.tus.tpt.selenium")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber-reports/selenium.html")
-public class SeleniumRunner {
+public class SeleniumIT {
 }
