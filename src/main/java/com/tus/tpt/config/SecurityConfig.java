@@ -50,7 +50,7 @@ public class SecurityConfig {
                                     "/styles.css",
                                     "/js/**",
                                     "/error",
-                                    "/favicon.ico",
+                                    "/images/favicon.ico",
                                     "/auth/**"
                             ).permitAll()
                             .requestMatchers("/api/users/**").hasRole("ADMIN")
