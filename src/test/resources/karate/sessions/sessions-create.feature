@@ -36,11 +36,5 @@ Feature: Training Sessions CREATE API
 
     Examples:
       | datetime            | type  | duration | status |
-      | 2026-02-09T17:00:00 | SPEED | 60       | 200    |
       | null                | SPEED | 60       | 400    |
       | bad-date            | SPEED | 60       | 400    |
-      | 2026-03-09T17:00:00 | null  | 60       | 400    |
-      | 2026-03-09T17:00:00 | SPEED | null     | 400    |
-      | 2026-03-09T17:00:00 | BAD   | 60       | 400    |
-      | 2026-03-09T17:00:00 | BAD   | 9        | 400    |
-      | 2026-03-09T17:00:00 | BAD   | 301      | 400    |

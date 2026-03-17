@@ -194,10 +194,17 @@ class TrainingSessionServiceTest {
                         "Training type is required"
                 ),
                 Arguments.of(
-                        (Consumer<TrainingSession>) s -> s.setDuration(10),
+                        (Consumer<TrainingSession>) s -> s.setDuration(8),
                         "Duration must be between 10 and 300 minutes"
                 ),
                 Arguments.of(
+                        (Consumer<TrainingSession>) s -> s.setDuration(9),
+                        "Duration must be between 10 and 300 minutes"
+                ),
+                Arguments.of(
+                        (Consumer<TrainingSession>) s -> s.setDuration(300),
+                        "Duration must be between 10 and 300 minutes"
+                ),Arguments.of(
                         (Consumer<TrainingSession>) s -> s.setDuration(301),
                         "Duration must be between 10 and 300 minutes"
                 )
