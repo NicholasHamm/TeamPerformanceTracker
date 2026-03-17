@@ -2,7 +2,10 @@
     'use strict';
 
     const SESSION_URL = '/api/sessions';
+
     let performanceTable = null;
+    let performanceMode = 'create';
+    let editingPlayerId = null;
 
 	const renderUploadSection = () => {
 	    const session = window.coachPage.getSelectedSession();
@@ -70,8 +73,7 @@
 	        </div>
 	    `);
 	};
-
-    function loadPerformanceTable() {
+    const loadPerformanceTable = () => {
         const sessionId = window.coachPage.getSelectedSessionId();
         if (!sessionId) return;
 
@@ -83,11 +85,11 @@
             destroy: true,
             ajax: {
                 url: `${SESSION_URL}/${sessionId}/performance`,
-                dataSrc: function (json) {
+                dataSrc: (json) => {
                     return Array.isArray(json) ? json : (json.performances || []);
                 },
                 headers: authHeaders(),
-                error: function (xhr) {
+                error: (xhr) => {
                     if (xhr.status === 401 || xhr.status === 403) {
                         handleUnauthorized();
                     }
@@ -99,109 +101,244 @@
                 { data: 'distancePerMin' },
                 { data: 'highIntensityDistance' },
                 { data: 'topSpeed' },
-                { data: 'effortRating' }
+                { data: 'effortRating' },
+                {
+                    data: null,
+                    orderable: false,
+                    render: (data, type, row) => {
+                        return `
+                            <button class="btn btn-sm btn-outline-primary edit-performance-btn"
+                                    data-player-id="${row.playerId}">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-performance-btn ms-2"
+                                    data-player-id="${row.playerId}"
+                                    data-player-name="${row.playerName}">
+                                Delete
+                            </button>
+                        `;
+                    }
+                }
             ]
         });
-    }
+    };
 
-	const openPerformanceModal = () => {
-	    const sessionId = window.coachPage.getSelectedSessionId();
-	    if (!sessionId) return;
+    const resetPerformanceModalForCreate = () => {
+        performanceMode = 'create';
+        editingPlayerId = null;
 
-	    const msgBox = document.getElementById('uploadMsg');
-	    hideMsg(msgBox);
+        const form = $('#performanceForm')[0];
+        if (form) form.reset();
 
-	    const form = $('#performanceForm')[0];
-	    if (form) form.reset();
+        $('#performanceModal .modal-title').text('Add Player Data');
+        $('#savePerformanceBtn').text('Save');
 
-	    hideMsg(document.getElementById('createPerformanceError'));
+        const $playerSelect = $('#performancePlayer');
+        $playerSelect.prop('disabled', false);
+        $playerSelect.empty().append('<option value="">Select player</option>');
 
-	    loadPlayersIntoSelect(sessionId);
-	};
+        hideMsg(document.getElementById('createPerformanceError'));
+    };
 
-	function savePerformance() {
-	    const sessionId = window.coachPage.getSelectedSessionId();
-	    const session = window.coachPage.getSelectedSession();
-	    if (!sessionId) return;
+    const openPerformanceModal = () => {
+        const sessionId = window.coachPage.getSelectedSessionId();
+        if (!sessionId) return;
 
-	    const msgBox = document.getElementById('uploadMsg');
-	    const totalDistance = Number($('#totalDistance').val());
-	    const duration = Number(session?.duration || 0);
-	    const playerName = $('#performancePlayer option:selected').text();
+        const msgBox = document.getElementById('uploadMsg');
+        hideMsg(msgBox);
 
-	    const payload = {
-	        playerId: Number($('#performancePlayer').val()),
-	        totalDistance,
-	        highIntensityDistance: Number($('#highIntensityDistance').val()),
-	        topSpeed: Number($('#topSpeed').val()),
-	        effortRating: Number($('#effortRating').val())
-	    };
+        resetPerformanceModalForCreate();
+        loadPlayersIntoSelect(sessionId);
+    };
 
-	    if (duration > 0) {
-	        payload.distancePerMin = Number((totalDistance / duration).toFixed(2));
-	    }
+    const openEditPerformanceModal = (row) => {
+        if (!row) return;
 
-	    $.ajax({
-	        type: 'POST',
-	        url: `${SESSION_URL}/${sessionId}/performance`,
-	        contentType: 'application/json',
-	        headers: authHeaders(),
-	        data: JSON.stringify(payload),
-	        success: function () {
-	            $('#performanceModal').modal('hide');
-	            showMsg(msgBox, `${playerName} performance uploaded successfully`, 'success');
+        performanceMode = 'edit';
+        editingPlayerId = Number(row.playerId);
 
-	            if (performanceTable) {
-	                performanceTable.ajax.reload();
-	            }
-	        },
-	        error: function (xhr) {
-	            if (xhr.status === 401 || xhr.status === 403) {
-	                handleUnauthorized();
-	                return;
-	            }
+        const form = $('#performanceForm')[0];
+        if (form) form.reset();
 
-	            const message = window.extractCoachError(xhr, 'Failed to upload player data');
-	            showMsg(document.getElementById('createPerformanceError'), message, 'danger');
-	        }
-	    });
-	}
+        hideMsg(document.getElementById('createPerformanceError'));
 
-	const loadPlayersIntoSelect = (sessionId) => {
-	    const msgBox = document.getElementById('uploadMsg');
+        $('#performanceModal .modal-title').text('Edit Player Data');
+        $('#savePerformanceBtn').text('Update');
 
-	    $.ajax({
-	        type: 'GET',
-	        url: `${SESSION_URL}/${sessionId}/available`,
-	        headers: authHeaders(),
-	        success: function (players) {
-	            if (!players || players.length === 0) {
-	                showMsg(
-	                    msgBox,
-	                    'All players already have performance data for this session.',
-	                    'warning'
-	                );
-	                return;
-	            }
+        const $playerSelect = $('#performancePlayer');
+        $playerSelect.empty();
+        $playerSelect.append(`<option value="${row.playerId}">${row.playerName}</option>`);
+        $playerSelect.val(row.playerId);
+        $playerSelect.prop('disabled', true);
 
-	            const $select = $('#performancePlayer');
-	            $select.empty();
-	            $select.append('<option value="">Select player</option>');
+        $('#totalDistance').val(row.totalDistance);
+        $('#highIntensityDistance').val(row.highIntensityDistance);
+        $('#topSpeed').val(row.topSpeed);
+        $('#effortRating').val(row.effortRating);
 
-	            players.forEach(player => {
-	                const fullName = `${player.firstName} ${player.lastName}`;
-	                $select.append(`<option value="${player.id}">${fullName}</option>`);
-	            });
+        $('#performanceModal').modal('show');
+    };
 
-	            $('#performanceModal').modal('show');
-	        },
-	        error: function (xhr) {
-	            if (xhr.status === 401 || xhr.status === 403) {
-	                handleUnauthorized();
-	            }
-	        }
-	    });
-	};
+    const createPerformance = () => {
+        const sessionId = window.coachPage.getSelectedSessionId();
+        const session = window.coachPage.getSelectedSession();
+        if (!sessionId) return;
+
+        const msgBox = document.getElementById('uploadMsg');
+        const totalDistance = Number($('#totalDistance').val());
+        const duration = Number(session?.duration || 0);
+        const playerName = $('#performancePlayer option:selected').text();
+
+        const payload = {
+            playerId: Number($('#performancePlayer').val()),
+            totalDistance,
+            highIntensityDistance: Number($('#highIntensityDistance').val()),
+            topSpeed: Number($('#topSpeed').val()),
+            effortRating: Number($('#effortRating').val())
+        };
+
+        if (duration > 0) {
+            payload.distancePerMin = Number((totalDistance / duration).toFixed(2));
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: `${SESSION_URL}/${sessionId}/performance`,
+            contentType: 'application/json',
+            headers: authHeaders(),
+            data: JSON.stringify(payload),
+            success: () => {
+                document.activeElement?.blur();
+                $('#performanceModal').modal('hide');
+
+                showMsg(msgBox, `${playerName} performance uploaded successfully`, 'success');
+
+                if (performanceTable) performanceTable.ajax.reload();
+            },
+            error: (xhr) => {
+                if (xhr.status === 401 || xhr.status === 403) {
+                    handleUnauthorized();
+                    return;
+                }
+
+                const message = window.extractCoachError(xhr, 'Failed to upload player data');
+                showMsg(document.getElementById('createPerformanceError'), message, 'danger');
+            }
+        });
+    };
+
+    const updatePerformance = () => {
+        const sessionId = window.coachPage.getSelectedSessionId();
+        const session = window.coachPage.getSelectedSession();
+        if (!sessionId || !editingPlayerId) return;
+
+        const msgBox = document.getElementById('uploadMsg');
+        const totalDistance = Number($('#totalDistance').val());
+        const duration = Number(session?.duration || 0);
+
+        const payload = {
+            playerId: editingPlayerId,
+            totalDistance,
+            highIntensityDistance: Number($('#highIntensityDistance').val()),
+            topSpeed: Number($('#topSpeed').val()),
+            effortRating: Number($('#effortRating').val())
+        };
+
+        if (duration > 0) {
+            payload.distancePerMin = Number((totalDistance / duration).toFixed(2));
+        }
+
+        $.ajax({
+            type: 'PUT',
+            url: `${SESSION_URL}/${sessionId}/performance`,
+            contentType: 'application/json',
+            headers: authHeaders(),
+            data: JSON.stringify(payload),
+            success: () => {
+                document.activeElement?.blur();
+                $('#performanceModal').modal('hide');
+
+                showMsg(msgBox, 'Performance data updated successfully', 'success');
+
+                if (performanceTable) performanceTable.ajax.reload();
+            },
+            error: (xhr) => {
+                if (xhr.status === 401 || xhr.status === 403) {
+                    handleUnauthorized();
+                    return;
+                }
+
+                const message = window.extractCoachError(xhr, 'Failed to update player data');
+                showMsg(document.getElementById('createPerformanceError'), message, 'danger');
+            }
+        });
+    };
+
+    const savePerformance = () => {
+        if (performanceMode === 'edit') updatePerformance();
+        else createPerformance();
+    };
+
+    const deletePerformance = (playerId, playerName) => {
+        const sessionId = window.coachPage.getSelectedSessionId();
+        if (!sessionId || !playerId) return;
+
+        const msgBox = document.getElementById('uploadMsg');
+
+        if (!confirm(`Delete performance data for ${playerName}?`)) return;
+
+        $.ajax({
+            type: 'DELETE',
+            url: `${SESSION_URL}/${sessionId}/player/${playerId}`,
+            headers: authHeaders(),
+            success: () => {
+                showMsg(msgBox, 'Performance data deleted successfully', 'success');
+
+                if (performanceTable) performanceTable.ajax.reload();
+            },
+            error: (xhr) => {
+                if (xhr.status === 401 || xhr.status === 403) {
+                    handleUnauthorized();
+                    return;
+                }
+
+                const message = window.extractCoachError(xhr, 'Failed to delete player data');
+                showMsg(msgBox, message, 'danger');
+            }
+        });
+    };
+
+    const loadPlayersIntoSelect = (sessionId) => {
+        const msgBox = document.getElementById('uploadMsg');
+
+        $.ajax({
+            type: 'GET',
+            url: `${SESSION_URL}/${sessionId}/available`,
+            headers: authHeaders(),
+            success: (players) => {
+                if (!players || players.length === 0) {
+                    showMsg(msgBox, 'All players already have performance data for this session.', 'warning');
+                    return;
+                }
+
+                const $select = $('#performancePlayer');
+                $select.empty();
+                $select.append('<option value="">Select player</option>');
+
+                players.forEach(player => {
+                    const fullName = `${player.firstName} ${player.lastName}`;
+                    $select.append(`<option value="${player.id}">${fullName}</option>`);
+                });
+
+                $('#performanceModal').modal('show');
+            },
+            error: (xhr) => {
+                if (xhr.status === 401 || xhr.status === 403) {
+                    handleUnauthorized();
+                }
+            }
+        });
+    };
 
     window.extractCoachError = (xhr, fallbackMessage) => {
         if (xhr.responseJSON?.error) return xhr.responseJSON.error;
@@ -219,15 +356,23 @@
 
     window.openPerformanceModal = openPerformanceModal;
 
-    $(document).on('click', '#addPerformanceBtn', function () {
-        openPerformanceModal();
+    $(document).on('click', '#addPerformanceBtn', () => openPerformanceModal());
+
+    $(document).on('click', '#savePerformanceBtn', () => savePerformance());
+
+    $(document).on('click', '.edit-performance-btn', function () {
+        const row = performanceTable.row($(this).closest('tr')).data();
+        openEditPerformanceModal(row);
     });
 
-    $(document).on('click', '#savePerformanceBtn', function () {
-        savePerformance();
+    $(document).on('click', '.delete-performance-btn', function () {
+        const playerId = Number($(this).data('player-id'));
+        const playerName = $(this).data('player-name');
+        deletePerformance(playerId, playerName);
     });
 
-	$(document).on('click', '#backToSessionsBtn', function () {
-	    window.coachPage.goTo('sessions');
-	});
+    $(document).on('click', '#backToSessionsBtn', () => {
+        window.coachPage.goTo('sessions');
+    });
+
 })();
