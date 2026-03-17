@@ -76,4 +76,33 @@ public class TrainingSessionController {
     public SessionPerformanceResponse getPerformanceForSession(@PathVariable Long sessionId) {
         return trainingSessionService.getUploadedDataForSession(sessionId);
     }
+    
+    @PutMapping("/{sessionId}/performance")
+    public ResponseEntity<?> updatePerformance(
+            @PathVariable Long sessionId,
+            @Valid @RequestBody UploadPlayerPerformance request) {
+
+    	playerPerformanceService.updatePlayerData(sessionId, request);
+
+        return ResponseEntity.ok("Performance data updated successfully");
+    }
+    
+    @DeleteMapping("/{sessionId}/player/{playerId}")
+    public ResponseEntity<?> deletePerformance(
+            @PathVariable Long sessionId,
+            @PathVariable Long playerId) {
+
+    	playerPerformanceService.deletePlayerPerformance(sessionId, playerId);
+
+        return ResponseEntity.ok("Performance data deleted successfully");
+    }
+    
+    @DeleteMapping("/{sessionId}")
+    public ResponseEntity<?> deleteSession(@PathVariable Long sessionId) {
+
+        trainingSessionService.deleteTrainingSession(sessionId);
+
+        return ResponseEntity.ok("Session data deleted successfully");
+    }
+    
 }
