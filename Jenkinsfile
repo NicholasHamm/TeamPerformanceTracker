@@ -63,6 +63,22 @@ pipeline {
 		        }
 		    }
 		}
+    
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('LocalSonar') {
+                    bat 'mvn -B sonar:sonar -Dsonar.projectKey=TeamPerformanceTracker -Dsonar.projectName=TeamPerformanceTracker'
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
     }
 
     post {
