@@ -14,7 +14,6 @@ import io.cucumber.java.en.When;
 public class CreateTrainingSessionSteps {
 
     private final DriverFactory df;
-    //private final TrainingSessionRepository trainingSessionRepository;
     
     public CreateTrainingSessionSteps(DriverFactory df) {
         this.df = df;
@@ -38,17 +37,31 @@ public class CreateTrainingSessionSteps {
     
     @When("the coach navigates to the create session form")
     public void navigateToCreateSessionForm() {
-    	df.driver().findElement(By.cssSelector("[data-page='create-session']")).click();
+    	//df.driver().findElement(By.cssSelector("[data-page='create-session']")).click();
+
+        var trendsLink = df.waitFor().until(
+            ExpectedConditions.presenceOfElementLocated(By.cssSelector("#navItems [data-page='create-session']"))
+        );
+
+        ((org.openqa.selenium.JavascriptExecutor) df.driver())
+                .executeScript("arguments[0].click();", trendsLink);
 
         df.waitFor().until(
-            ExpectedConditions.visibilityOfElementLocated(By.id("saveSessionBtn"))
+            ExpectedConditions.visibilityOfElementLocated(By.id("sessionModal"))
         );
     }
     
     @When("the coach enters session date and time {string}")
     public void enterSessionDateTime(String dateTime) {
-        df.driver().findElement(By.id("createDatetime")).clear();
-        df.driver().findElement(By.id("createDatetime")).sendKeys(dateTime);
+        var input = df.driver().findElement(By.id("createDatetime"));
+
+        ((org.openqa.selenium.JavascriptExecutor) df.driver()).executeScript(
+            "arguments[0].value = arguments[1];" +
+            "arguments[0].dispatchEvent(new Event('input', { bubbles: true }));" +
+            "arguments[0].dispatchEvent(new Event('change', { bubbles: true }));",
+            input,
+            dateTime
+        );
     }
     
     @When("the coach selects training type {string}")
@@ -59,22 +72,45 @@ public class CreateTrainingSessionSteps {
     
     @When("the coach enters duration {int}")
     public void enterDuration(Integer duration) {
-        df.driver().findElement(By.id("createDuration")).clear();
-        df.driver().findElement(By.id("createDuration")).sendKeys(duration.toString());
+        var input = df.driver().findElement(By.id("createDuration"));
+
+        ((org.openqa.selenium.JavascriptExecutor) df.driver()).executeScript(
+            "arguments[0].value = arguments[1];" +
+            "arguments[0].dispatchEvent(new Event('input', { bubbles: true }));" +
+            "arguments[0].dispatchEvent(new Event('change', { bubbles: true }));",
+            input,
+            duration.toString()
+        );
+
+        System.out.println("createDuration value = " +
+            df.driver().findElement(By.id("createDuration")).getAttribute("value"));
     }
     
     @When("the coach submits the session form")
     public void submitSessionForm() {
-        df.driver().findElement(By.id("saveSessionBtn")).click();
+        df.waitFor().until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("sessionModal"))
+        );
+
+        var saveButton = df.waitFor().until(
+                ExpectedConditions.elementToBeClickable(By.id("saveSessionBtn"))
+        );
+
+        ((org.openqa.selenium.JavascriptExecutor) df.driver())
+                .executeScript("arguments[0].click();", saveButton);
     }
 
     @Then("a session success message should be displayed")
     public void successMessageDisplayed() {
         df.waitFor().until(
-            ExpectedConditions.visibilityOfElementLocated(By.id("sessionMsg"))
+            ExpectedConditions.invisibilityOfElementLocated(By.id("sessionModal"))
         );
 
-        assertTrue(df.driver().findElement(By.id("sessionMsg")).isDisplayed());
+        df.waitFor().until(
+            ExpectedConditions.visibilityOfElementLocated(By.id("createSessionSuccess"))
+        );
+
+        assertTrue(df.driver().findElement(By.id("createSessionSuccess")).isDisplayed());
     }
     
     @After

@@ -3,6 +3,7 @@
 
     const SESSION_URL = '/api/sessions';
     let sessionsTable = null;
+	let isCreatingSession = false;
 
     function renderSessionsSection() {
 
@@ -102,8 +103,67 @@
 	    $('#sessionModal').modal('show');
 	}
 
+	function createSession() {
+		if (isCreatingSession) return;
+		isCreatingSession = true;
+		
+		const saveBtn = $('#saveSessionBtn');
+		saveBtn.prop('disabled', true);
+		
+	    const msgBox = document.getElementById('createSessionSuccess');
+	    const errorBox = document.getElementById('createSessionError');
+
+	    hideMsg(errorBox);
+	    hideMsg(msgBox);
+
+		const rawDatetime = $('#createDatetime').val();
+
+		const payload = {
+		    datetime: rawDatetime && rawDatetime.length === 16 ? `${rawDatetime}:00` : rawDatetime,
+		    type: $('#createType').val(),
+		    duration: Number($('#createDuration').val())
+		};
+
+	    $.ajax({
+	        type: 'POST',
+	        url: SESSION_URL,
+	        contentType: 'application/json',
+	        headers: authHeaders(),
+	        data: JSON.stringify(payload),
+			success: () => {
+			    $('#sessionModal').modal('hide');
+
+			    renderSessionsSection();
+			    loadSessionsTable();
+
+			    const msgBox = document.getElementById('createSessionSuccess');
+			    showMsg(msgBox, 'Training session created successfully', 'success');
+			},
+	        error: (xhr) => {
+	            if (xhr.status === 401 || xhr.status === 403) {
+	                handleUnauthorized();
+	                return;
+	            }
+
+	            const message = window.extractCoachError
+	                ? window.extractCoachError(xhr, 'Failed to create session')
+	                : 'Failed to create session';
+
+	            showMsg(errorBox, message, 'danger');
+	        },
+			complete: () => {
+			    isCreatingSession = false;
+			    saveBtn.prop('disabled', false);
+			}
+	    });
+	}
+	
 	window.openCreateSessionModal = openCreateSessionModal;
 
+	$(document).off('click', '#saveSessionBtn').on('click', '#saveSessionBtn', function () {
+	    createSession();
+	});
+	
     $(document).on('click', '.manage-session-btn', function () {
 
         const sessionId = Number($(this).data('session-id'));
