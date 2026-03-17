@@ -22,7 +22,7 @@
                         <th>Datetime</th>
                         <th>Type</th>
                         <th>Duration</th>
-                        <th>Upload Data</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -62,11 +62,17 @@
                 {
                     data: null,
                     render(data, type, row) {
-                        return `
-                        <button class="btn btn-sm btn-outline-primary manage-session-btn"
-                                data-session-id="${row.id}">
-                            Manage
-                        </button>`;
+						return `
+				            <div class="d-flex gap-2">
+				                <button class="btn btn-sm btn-outline-primary manage-session-btn"
+				                        data-session-id="${row.id}">
+				                    Manage
+				                </button>
+				                <button class="btn btn-sm btn-outline-danger delete-session-btn"
+				                        data-session-id="${row.id}">
+				                    Delete
+				                </button>
+				            </div>`;
                     }
                 }
             ]
@@ -157,6 +163,36 @@
 			}
 	    });
 	}
+	
+	$(document).off('click', '.delete-session-btn').on('click', '.delete-session-btn', function () {
+	    const sessionId = Number($(this).data('session-id'));
+
+	    if (!confirm('Are you sure you want to delete this session and its associated player data?')) {
+	        return;
+	    }
+
+	    $.ajax({
+	        type: 'DELETE',
+	        url: `${SESSION_URL}/${sessionId}`,
+	        headers: authHeaders(),
+	        success: function () {
+	            renderSessionsSection();
+	            loadSessionsTable();
+
+	            const msgBox = document.getElementById('createSessionSuccess');
+	            showMsg(msgBox, 'Session data deleted successfully', 'warn');
+	        },
+	        error: function (xhr) {
+	            if (xhr.status === 401 || xhr.status === 403) {
+	                handleUnauthorized();
+	                return;
+	            }
+
+	            const msgBox = document.getElementById('createSessionSuccess');
+	            showMsg(msgBox, 'Failed to delete session data', 'danger');
+	        }
+	    });
+	});
 	
 	window.openCreateSessionModal = openCreateSessionModal;
 

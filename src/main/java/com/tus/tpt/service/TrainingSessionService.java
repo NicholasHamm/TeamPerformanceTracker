@@ -11,6 +11,7 @@ import com.tus.tpt.model.PlayerPerformance;
 import com.tus.tpt.model.Role;
 import com.tus.tpt.model.TrainingSession;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -136,6 +137,7 @@ public class TrainingSessionService {
         }
     }
 
+    @Transactional
     public void deleteTrainingSession(Long sessionId) {
 
         TrainingSession session = trainingSessionRepo.findById(sessionId)

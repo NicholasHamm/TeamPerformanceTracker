@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <strong>Datetime:</strong>
-                            <div>${session?.datetime ?? ''}</div>
+                            <div>${formatDateGMT(session?.datetime) ?? ''}</div>
                         </div>
                         <div class="col-md-4">
                             <strong>Type:</strong>
