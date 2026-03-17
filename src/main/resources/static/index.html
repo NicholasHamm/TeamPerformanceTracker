@@ -6,13 +6,14 @@
     <title>Team Performance Tracker</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/minty/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <div class="container py-4">
 
+    <!-- LOGIN SECTION -->
     <section id="loginView" class="row justify-content-center">
         <div class="col-md-4">
             <h2 class="mb-3">Login</h2>
@@ -35,198 +36,26 @@
         </div>
     </section>
 
+    <!-- APP SECTION -->
     <section id="appView" style="display:none;">
+        <h1 id="pageTitle" class="mb-0">Dashboard</h1>
+        <!-- NAVBAR SECTION -->
+        <nav class="navbar navbar-expand-lg navbar-mainbg sticky-top">
+            <a class="navbar-brand navbar-logo">Team Performance Tracker</a>
 
-        <header class="app-header">
-            <nav class="navbar navbar-expand-lg header-navbar">
-                <div class="container-fluid">
-                    <div class="header-brand">
-                        <i class="fa-solid fa-futbol me-2"></i>
-                        Team Performance Tracker
-                    </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars text-white"></i>
+            </button>
 
-                    <button class="navbar-toggler" type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#navbarSupportedContent">
-                        <i class="fa-solid fa-bars text-white"></i>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul id="navItems" class="navbar-nav ms-auto"></ul>
-                    </div>
-                </div>
-            </nav>
-
-            <div class="header-banner">
-                <div class="pitch-lines"></div>
-                <img
-                    class="header-ball"
-                    src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Soccerball.svg"
-                    alt="Football"
-                >
-                <div class="header-overlay">
-                    <div class="header-text">
-                        <h1 id="pageTitle">Dashboard</h1>
-                        <p class="header-subtitle">
-                            Track sessions, analyse performance, and monitor player metrics
-                        </p>
-                    </div>
-                </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul id="navItems" class="navbar-nav ms-auto"></ul>
             </div>
-        </header>
+        </nav>
 
         <div id="pageContent"></div>
     </section>
-    
-    <!-- MODALS -->
-	<div class="modal fade" id="sessionModal" tabindex="-1" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <h5 class="modal-title">Create New Training Session</h5>
-	                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-	            </div>
-	            <div class="modal-body">
-	                <form id="sessionForm">
-	                    <div id="createSessionError" class="alert d-none d-flex align-items-center gap-2">
-	                        <i class="bi fs-5 flex-shrink-0"></i>
-	                        <div class="msg-text"></div>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="createDatetime" class="form-label">Datetime</label>
-	                        <input type="datetime-local" class="form-control" id="createDatetime" required>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="createType" class="form-label">Training Type</label>
-	                        <select class="form-control" id="createType" required>
-	                            <option value="">Select type</option>
-	                            <option value="CONDITIONING">Conditioning</option>
-	                            <option value="TACTICAL">Tactical</option>
-	                            <option value="MATCH_SIMULATION">Match Simulation</option>
-	                            <option value="SPEED">Speed</option>
-	                            <option value="RECOVERY">Recovery</option>
-	                        </select>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="createDuration" class="form-label">Duration (minutes)</label>
-	                        <input type="number" min="1" class="form-control" id="createDuration" required>
-	                    </div>
-	                </form>
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-	                <button type="button" class="btn btn-primary" id="saveSessionBtn">Save</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
-	<div class="modal fade" id="performanceModal" tabindex="-1" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <h5 class="modal-title">Add Player Data</h5>
-	                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-	            </div>
-	            <div class="modal-body">
-	                <form id="performanceForm">
-	                    <div id="createPerformanceError" class="alert d-none d-flex align-items-center gap-2">
-	                        <i class="bi fs-5 flex-shrink-0"></i>
-	                        <div class="msg-text"></div>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="performancePlayer" class="form-label">Player</label>
-	                        <select class="form-control" id="performancePlayer" required>
-	                            <option value="">Select player</option>
-	                        </select>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="totalDistance" class="form-label">Total Distance</label>
-	                        <input type="number" min="0" step="0.01" class="form-control" id="totalDistance" required>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="highIntensityDistance" class="form-label">High Intensity Distance</label>
-	                        <input type="number" min="0" step="0.01" class="form-control" id="highIntensityDistance" required>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="topSpeed" class="form-label">Top Speed</label>
-	                        <input type="number" min="0" step="0.01" class="form-control" id="topSpeed" required>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="effortRating" class="form-label">Effort Rating</label>
-	                        <input type="number" min="1" max="10" class="form-control" id="effortRating" required>
-	                    </div>
-	                </form>
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-	                <button type="button" class="btn btn-primary" id="savePerformanceBtn">Save</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
-	<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <h5 class="modal-title" id="userModalLabel">Create New User</h5>
-	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-	            </div>
-	
-	            <div class="modal-body">
-	                <form id="userForm">
-	                    <div id="createUserError" class="alert d-none d-flex align-items-center gap-2">
-	                        <i class="bi fs-5 flex-shrink-0"></i>
-	                        <div class="msg-text"></div>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="createUsername" class="form-label">Username</label>
-	                        <input type="text" class="form-control" id="createUsername" required>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="createPassword" class="form-label">Password</label>
-	                        <input type="password" class="form-control" id="createPassword" required>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="createFirstName" class="form-label">First Name</label>
-	                        <input type="text" class="form-control" id="createFirstName" required>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="createLastName" class="form-label">Last Name</label>
-	                        <input type="text" class="form-control" id="createLastName" required>
-	                    </div>
-	
-	                    <div class="mb-3">
-	                        <label for="createRole" class="form-label">Role</label>
-	                        <select class="form-control" id="createRole" required>
-	                            <option value="PLAYER">PLAYER</option>
-	                            <option value="COACH">COACH</option>
-	                            <option value="ADMIN">ADMIN</option>
-	                        </select>
-	                    </div>
-	                </form>
-	            </div>
-	
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-	                <button type="button" class="btn btn-primary" id="saveUserBtn">Save</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
 
 </div>
 
