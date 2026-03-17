@@ -30,3 +30,15 @@ Feature: Training Sessions GET API
     Given path 'api/sessions', 99999
     When method get
     Then status 404
+    
+   Scenario: Get performance for session
+    Given path 'api/sessions', 1, 'performance'
+    When method get
+    Then status 200
+    And match response ==
+    """
+    {
+      sessionId: '#number',
+      performances: '#[]'
+    }
+    """

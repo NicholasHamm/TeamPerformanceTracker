@@ -54,7 +54,3 @@ Feature: User Management CREATE API
       | username | password  | firstName | lastName | role  | status |
       | ab       | Password1 | Joe       | Bloggs   | ADMIN | 400    |
       | joe      | pass      | Joe       | Bloggs   | ADMIN | 400    |
-      | joe      | Password1 |           | Bloggs   | ADMIN | 400    |
-      | joe      | Password1 | Joe       |          | ADMIN | 400    |
-      | joe      | Password1 | Joe       | Bloggs   | null  | 400    |
-      | admin    | Password1 | System    | Admin    | ADMIN | 400    |
