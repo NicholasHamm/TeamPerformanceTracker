@@ -62,21 +62,21 @@ class PlayerSessionServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        assertEquals(LocalDateTime.of(2026, 3, 10, 18, 0), result.get(0).getDatetime());
-        assertEquals(TrainingType.CONDITIONING, result.get(0).getType());
-        assertEquals(60, result.get(0).getDuration());
-        assertEquals(5000.0, result.get(0).getTotalDistance());
-        assertEquals(1200.0, result.get(0).getHighIntensityDistance());
-        assertEquals(28.5, result.get(0).getTopSpeed());
-        assertEquals(8, result.get(0).getEffortRating());
+        assertEquals(LocalDateTime.of(2026, 3, 10, 18, 0), result.get(0).datetime());
+        assertEquals(TrainingType.CONDITIONING, result.get(0).type());
+        assertEquals(60, result.get(0).duration());
+        assertEquals(5000.0, result.get(0).totalDistance());
+        assertEquals(1200.0, result.get(0).highIntensityDistance());
+        assertEquals(28.5, result.get(0).topSpeed());
+        assertEquals(8, result.get(0).effortRating());
 
-        assertEquals(LocalDateTime.of(2026, 3, 8, 19, 30), result.get(1).getDatetime());
-        assertEquals(TrainingType.SPEED, result.get(1).getType());
-        assertEquals(75, result.get(1).getDuration());
-        assertEquals(6200.0, result.get(1).getTotalDistance());
-        assertEquals(1500.0, result.get(1).getHighIntensityDistance());
-        assertEquals(30.2, result.get(1).getTopSpeed());
-        assertEquals(9, result.get(1).getEffortRating());
+        assertEquals(LocalDateTime.of(2026, 3, 8, 19, 30), result.get(1).datetime());
+        assertEquals(TrainingType.SPEED, result.get(1).type());
+        assertEquals(75, result.get(1).duration());
+        assertEquals(6200.0, result.get(1).totalDistance());
+        assertEquals(1500.0, result.get(1).highIntensityDistance());
+        assertEquals(30.2, result.get(1).topSpeed());
+        assertEquals(9, result.get(1).effortRating());
 
         verify(playerPerformanceRepository, times(1))
                 .findByPlayer_UsernameIgnoreCaseOrderBySession_DatetimeDesc(username);
