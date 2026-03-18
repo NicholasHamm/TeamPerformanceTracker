@@ -311,10 +311,7 @@
 	    renderSpeedChart(sortedData);
 	    renderEffortChart(sortedData);
 
-	    updateTrendSummary(
-	        'Average Total Distance',
-	        calculateAverage(sortedData, 'totalDistance')
-	    );
+	    updateTrendSummary( 'Average Total Distance', calculateAverage(sortedData, 'totalDistance') );
 	};
 	
 	const bindTrendTabEvents = (data) => {

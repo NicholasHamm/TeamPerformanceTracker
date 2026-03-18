@@ -27,6 +27,7 @@ public class PlayerSessionService {
                         pp.getSession().getDuration(),
                         pp.getTotalDistance(),
                         pp.getHighIntensityDistance(),
+                        pp.getDistancePerMin(),
                         pp.getTopSpeed(),
                         pp.getEffortRating()
                 ))

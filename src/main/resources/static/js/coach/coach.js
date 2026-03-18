@@ -98,12 +98,12 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="topSpeed" class="form-label">Top Speed</label>
+                                    <label for="topSpeed" class="form-label">Top Speed (< 15m/s)</label>
                                     <input type="number" min="0" step="0.01" class="form-control" id="topSpeed" required>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="effortRating" class="form-label">Effort Rating</label>
+                                    <label for="effortRating" class="form-label">Effort Rating (1 - 10)</label>
                                     <input type="number" min="1" max="10" class="form-control" id="effortRating" required>
                                 </div>
                             </form>

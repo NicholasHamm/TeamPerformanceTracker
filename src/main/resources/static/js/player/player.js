@@ -27,9 +27,10 @@
                         <tr>
                             <th>Datetime</th>
                             <th>Type</th>
-                            <th>Duration</th>
+                            <th>Duration (min)</th>
                             <th>Total Distance</th>
                             <th>High Intensity Distance</th>
+							<th>Distance/min</th>
                             <th>Top Speed</th>
                             <th>Effort Rating</th>
                         </tr>
@@ -99,9 +100,22 @@
                 },
                 { data: 'type' },
                 { data: 'duration' },
-                { data: 'totalDistance' },
-                { data: 'highIntensityDistance' },
-                { data: 'topSpeed' },
+				{ 
+				    data: 'totalDistance',
+				    render: data => data != null ? data.toFixed(2) : ''
+				},
+				{ 
+				    data: 'highIntensityDistance',
+				    render: data => data != null ? data.toFixed(2) : ''
+				},
+				{ 
+				    data: 'distancePerMin',
+				    render: data => data != null ? data.toFixed(2) : ''
+				},
+				{ 
+				    data: 'topSpeed',
+				    render: data => data != null ? data.toFixed(2) : ''
+				},
                 { data: 'effortRating' }
             ]
         });

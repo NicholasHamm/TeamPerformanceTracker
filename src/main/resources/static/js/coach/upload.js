@@ -51,8 +51,8 @@
                     <tr>
                         <th>Player</th>
                         <th>Total Distance</th>
-                        <th>Distance/Min</th>
                         <th>High Intensity Distance</th>
+						<th>Distance/Min</th>
                         <th>Top Speed</th>
                         <th>Effort Rating</th>
                         <th>Actions</th>
@@ -111,10 +111,22 @@
             },
             columns: [
                 { data: 'playerName' },
-                { data: 'totalDistance' },
-                { data: 'distancePerMin' },
-                { data: 'highIntensityDistance' },
-                { data: 'topSpeed' },
+				{ 
+				    data: 'totalDistance',
+				    render: data => data != null ? data.toFixed(2) : ''
+				},
+				{ 
+				    data: 'highIntensityDistance',
+				    render: data => data != null ? data.toFixed(2) : ''
+				},
+				{ 
+				    data: 'distancePerMin',
+				    render: data => data != null ? data.toFixed(2) : ''
+				},
+				{ 
+				    data: 'topSpeed',
+				    render: data => data != null ? data.toFixed(2) : ''
+				},
                 { data: 'effortRating' },
                 {
                     data: null,

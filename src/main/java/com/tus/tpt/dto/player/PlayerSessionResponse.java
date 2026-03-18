@@ -9,6 +9,7 @@ public class PlayerSessionResponse {
     private Integer duration;
     private Double totalDistance;
     private Double highIntensityDistance;
+    private Double distancePerMin;
     private Double topSpeed;
     private Integer effortRating;
 
@@ -17,6 +18,7 @@ public class PlayerSessionResponse {
                                  Integer duration,
                                  Double totalDistance,
                                  Double highIntensityDistance,
+                                 Double distancePerMin,
                                  Double topSpeed,
                                  Integer effortRating) {
         this.datetime = datetime;
@@ -24,6 +26,7 @@ public class PlayerSessionResponse {
         this.duration = duration;
         this.totalDistance = totalDistance;
         this.highIntensityDistance = highIntensityDistance;
+        this.distancePerMin = distancePerMin;
         this.topSpeed = topSpeed;
         this.effortRating = effortRating;
     }
@@ -45,6 +48,10 @@ public class PlayerSessionResponse {
 
     public Double getHighIntensityDistance() {
         return highIntensityDistance;
+    }
+    
+    public Double getDistancePerMin() {
+        return distancePerMin;
     }
 
     public Double getTopSpeed() {
