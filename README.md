@@ -1,79 +1,140 @@
-# TeamPerformanceTracker
-Team Performance Tracker is a web-based application for managing football training sessions and player performance data. It supports roles such as Admin, Coach, and Player, allowing session creation, performance upload, and analysis of individual and team metrics.
+# ⚽ TeamPerformanceTracker
+
+A web-based application for managing football training sessions and player performance data. Built with role-based access for Admins, Coaches, and Players to streamline session management, performance uploads, and data-driven analysis.
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [Database](#database)
+- [Seed Data](#seed-data)
+- [Running Tests](#running-tests)
+
+---
 
 ## Features
-User Management
-  * Admin can create users
-  * Admin can assign roles
 
-Training Sessions
-  - Coach can create sessions
-  - Sessions include type, date, duration
-  - Coach can delete training sessions
-  - Coach can upload player performance data for a session
-  - Coach can update and delete player performance data
+### 👤 User Management
+- Admins can create users and assign roles (Admin, Coach, Player)
 
-Player Performance
-  - Upload performance metrics
-  - View trends and charts
-  
-### Technologies Used
+![Admin Dashboard](screenshots/admin.png)
+
+### 📋 Training Sessions
+- Coaches can create, update, and delete training sessions
+- Sessions include type, date, and duration
+- Coaches can upload, update, and delete player performance data per session
+
+![Coach Dashboard](screenshots/coach.png)
+
+![Performance Upload](screenshots/coachPerformance.png)
+
+### 📊 Player Performance
+- Upload and track performance metrics per session
+- Visualise trends and charts over time
+
+![Player Dashboard](screenshots/player.png)
+
+![Player Trends](screenshots/playerTrends.png)
+
+---
+
+## Tech Stack
+
+| Layer | Technologies |
+|---|---|
+| **Backend** | Java 21, Spring Boot, Spring Data JPA, Maven |
+| **Database** | MySQL |
+| **Frontend** | HTML, CSS, JavaScript, jQuery, Bootstrap |
+| **Testing** | JUnit, Mockito, Karate (API), Selenium (UI) |
+| **CI/CD** | Jenkins |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
 - Java 21
-- Spring Boot
 - Maven
+- MySQL (running locally)
 
-- Spring Data JPA
-- MySQL
-
-- HTML, CSS, JavaScript
-- jQuery
-- Bootstrap
-
-- JUnit, Mockito, Karate, Selenium
-
-- Jenkins
-
-## How to Run
-##### Prerequisites 
-- Java 21 installed
-- Maven installed
-- MySQL installed and running
-
-##### Clone/Download the repository
-git clone https://github.com/NicholasHamm/TeamPerformanceTracker 
+### Installation
+```bash
+git clone https://github.com/NicholasHamm/TeamPerformanceTracker
 cd TeamPerformanceTracker
+mvn clean package
+mvn spring-boot:run
+```
 
-`mvn clean package`
+Alternatively, import the project into **IntelliJ IDEA** or **Eclipse** and run it as a Spring Boot Application.
 
-`mvn spring-boot:run`
+The application will be available at: **http://localhost:8082**
 
-Or
+---
 
-Run from inside Eclipse/Intellij as a Springboot Application
+## Configuration
 
-##### Application Properties
-The application should be accessible from http://localhost:8082 by default
+Application settings are managed via `src/main/resources/application.properties`. Update the MySQL connection details if needed:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/tptdb
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
 
-##### MySQL
-Once MySQL is running, when the application should automatically create a new schema named 'tptdb', consisting of 3 tables: users, training_sessions, player_performance
+---
 
-##### Seed data users (username/password)
-* Admin: admin / admin
-* Coach: coach1 / coach1
-* Player: player1 / player1
+## Database
 
-##### Run Tests
-- Unit: 	
+On startup, the application will automatically create a MySQL schema named **`tptdb`** with the following tables:
 
-		`mvn test`
+- `users`
+- `training_sessions`
+- `player_performance`
 
-- API (Karate):	
+> Ensure MySQL is running before starting the application.
 
-		`mvn verify`
-		`mvn -Papi-tests verify`
-		
-- UI (Selenium):		
+---
 
-		`mvn -Pui-tests verify`
+## Seed Data
 
-The project is part of a Cross-Modular Assessment between Web Technologies and Continuous Build &amp; Delivery.
+The following default users are seeded on first run:
+
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `admin` |
+| Coach | `coach1` | `coach1` |
+| Player | `player1` | `player1` |
+
+---
+
+## Running Tests
+
+### Unit Tests
+```bash
+mvn test
+```
+
+### All Integration/UI Tests
+```bash
+mvn verify
+```
+
+### API Tests (Karate)
+```bash
+mvn -Papi-tests verify
+```
+
+### UI Tests (Selenium)
+```bash
+mvn -Pui-tests verify
+```
+
+---
+
+## Project Context
+
+This project was developed as part of a **Cross-Modular Assessment** spanning Web Technologies and Continuous Build & Delivery modules.
