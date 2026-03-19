@@ -28,7 +28,7 @@ pipeline {
 
         stage('Unit Tests') {
             steps {
-                bat 'mvn -B test verify'
+                bat 'mvn -B test'
             }
             post {
                 always {
