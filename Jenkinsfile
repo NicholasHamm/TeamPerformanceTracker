@@ -28,7 +28,7 @@ pipeline {
 
         stage('Unit Tests') {
             steps {
-                bat 'mvn -B test'
+                bat 'mvn -B test verify'
             }
             post {
                 always {
@@ -67,7 +67,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('LocalSonar') {
-                    bat 'mvn -B sonar:sonar -Dsonar.projectKey=TeamPerformanceTracker -Dsonar.projectName=TeamPerformanceTracker'
+                    bat 'mvn -B verify sonar:sonar -Dsonar.projectKey=TeamPerformanceTracker -Dsonar.projectName=TeamPerformanceTracker'
                 }
             }
         }
